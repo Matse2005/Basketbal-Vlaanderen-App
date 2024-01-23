@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Basketbal Vlaanderen",
+    "slug": "basketbal-vlaanderen",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/vbl/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9c2d5474-3e15-46be-981c-43c0d2fa9f40"
+      }
+    },
+    "owner": "matsevh"
+  }
+}
