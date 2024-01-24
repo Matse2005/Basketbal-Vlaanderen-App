@@ -20,17 +20,22 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Icon, Image } from "react-native-elements";
 
-function GamesScreen({ navigation }) {
+function GamesScreen({ route, navigation }) {
   const [refreshing, setRefreshing] = React.useState(false);
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
+  const [dates, setDates] = useState({});
+
+  const { givenDate } = route.params;
+
+  const [date, setDate] = useState(givenDate ?? "27-1-2024");
 
   const favorites = [
-    "BVBL1171J21%20%201",
-    "BVBL1171HSE%20%202",
-    "BVBL1171DSE%20%201",
-    "BVBL1171HSE%20%201",
-    "BVBL1171J18%20%201",
+    "team_BVBL1171J21%20%201",
+    "team_BVBL1171HSE%20%202",
+    "team_BVBL1171DSE%20%201",
+    "team_BVBL1171HSE%20%201",
+    "team_BVBL1171J18%20%201",
   ];
 
   // const storeData = async (value) => {
@@ -53,44 +58,90 @@ function GamesScreen({ navigation }) {
 
   // storeData(favorites);
 
-  const getMatches = async () => {
-    var items = [];
+  function nearestFutureDate(currDate) {
+    return currDate;
+    curr = new Date(date.split("-").reverse().join("-"));
 
-    for (const favorite of favorites) {
-      try {
-        const response = await fetch(
-          "https://vblCB.wisseq.eu/VBLCB_WebService/data/TeamMatchesByGuid?teamGuid=" +
-            favorite
-        );
-        const json = await response.json();
-        items.push(...json);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
+    dates.forEach((thisDate) => {
+      check = new Date(date.split("-").reverse().join("-"));
+    });
+  }
+
+  const getDates = (matches) => {
+    var returnDates = {};
+    var allDates = [];
+
+    matches.forEach((match) => {
+      if (!allDates.includes(match.datumString)) {
+        allDates.push(match.datumString);
       }
+    });
+
+    if (!allDates.includes(date)) {
+      setDate(date);
     }
 
-    function compareDateTime(a, b) {
-      const dateA = new Date(
-        `${a.datumString.split("-").reverse().join("-")} ${a.beginTijd.replace(
-          ".",
-          ":"
-        )}`
-      );
-      const dateB = new Date(
-        `${b.datumString.split("-").reverse().join("-")} ${b.beginTijd.replace(
-          ".",
-          ":"
-        )}`
-      );
-
-      return dateA - dateB;
+    for (let i = 0; i < allDates.length; i++) {
+      returnDates["curr"] = allDates[i];
+      returnDates["prev"] = [];
+      returnDates["next"] = [];
+      if (allDates[i - 2]) returnDates["prev"].push(allDates[i - 2]);
+      if (allDates[i - 1]) returnDates["prev"].push(allDates[i - 1]);
+      if (allDates[i + 1]) returnDates["next"].push(allDates[i + 1]);
+      if (allDates[i + 2]) returnDates["next"].push(allDates[i + 2]);
     }
 
-    items.sort(compareDateTime);
+    setDates(returnDates);
+  };
 
-    setData(items);
+  const getMatches = async () => {
+    try {
+      var items = [];
+
+      for (const favorite of favorites) {
+        if (favorite.split("_")[0] == "team") {
+          const response = await fetch(
+            "https://vblCB.wisseq.eu/VBLCB_WebService/data/TeamMatchesByGuid?teamGuid=" +
+              favorite.split("_")[1]
+          );
+          const json = await response.json();
+          items = [...items, ...json];
+        }
+      }
+
+      function compareDateTime(a, b) {
+        const dateA = new Date(
+          `${a.datumString
+            .split("-")
+            .reverse()
+            .join("-")} ${a.beginTijd.replace(".", ":")}`
+        );
+        const dateB = new Date(
+          `${b.datumString
+            .split("-")
+            .reverse()
+            .join("-")} ${b.beginTijd.replace(".", ":")}`
+        );
+
+        return dateA - dateB;
+      }
+
+      items.sort(compareDateTime);
+
+      const filtered = items.filter(
+        (item) =>
+          new Date(
+            item.datumString.split("-").reverse().join("-")
+          ).toString() ==
+          new Date(date.split("-").reverse().join("-")).toString()
+      );
+
+      setData(filtered);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
