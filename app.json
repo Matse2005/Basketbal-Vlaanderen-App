@@ -15,13 +15,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "be.matsevh.basketbal.vlaanderen"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "be.matsevh.basketbal.vlaanderen"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -31,6 +33,12 @@
         "projectId": "9c2d5474-3e15-46be-981c-43c0d2fa9f40"
       }
     },
-    "owner": "matsevh"
+    "owner": "matsevh",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/9c2d5474-3e15-46be-981c-43c0d2fa9f40"
+    }
   }
 }
