@@ -24,14 +24,13 @@ import { Icon, Image } from "react-native-elements";
 import { TabView, SceneMap } from "react-native-tab-view";
 
 // Screens
-import GamesScreen from "./screens/Games";
-import ClubsScreen from "./screens/Clubs";
-import FavoritesScreen from "./screens/Favorites";
-import MatchScreen from "./screens/Match";
-import PouleScreen from "./screens/Poule";
-import ClubScreen from "./screens/Club";
-import ClubInfoScreen from "./screens/Club/Info";
-import ClubTeamsScreen from "./screens/Club/Teams";
+import GamesScreen from "./src/screens/Games";
+import ClubsScreen from "./src/screens/Clubs";
+import FavoritesScreen from "./src/screens/Favorites";
+import MatchScreen from "./src/screens/Match";
+import PouleScreen from "./src/screens/Poule";
+import ClubScreen from "./src/screens/Club";
+import TeamScreen from "./src/screens/Team";
 
 const Tab = createBottomTabNavigator();
 
@@ -41,7 +40,6 @@ function Home() {
       activeColor="#fb923c"
       screenOptions={{
         activeTintColor: "#fb923c",
-
         tabBarActiveTintColor: "#fb923c",
       }}
     >
@@ -155,21 +153,9 @@ function App() {
           }}
         />
         <Stack.Screen
-          name="ClubInfo"
-          component={ClubInfoScreen}
-          options={{ title: "Club" }}
-          initialParams={{
-            guid: null,
-          }}
-        />
-        <Stack.Screen
-          name="ClubTeams"
-          component={ClubTeamsScreen}
-          options={{
-            title: "Teams",
-            headerBackVisible: false,
-            gestureEnabled: false,
-          }}
+          name="Team"
+          component={TeamScreen}
+          options={{ title: "Team" }}
           initialParams={{
             guid: null,
           }}
@@ -179,15 +165,15 @@ function App() {
           component={MatchScreen}
           options={{ title: "Match" }}
           initialParams={{
-            givenDate: null,
+            guid: null,
           }}
         />
         <Stack.Screen
           name="Poule"
           component={PouleScreen}
-          options={{ title: "Poule" }}
+          options={{ title: "Competitie" }}
           initialParams={{
-            givenDate: null,
+            guid: null,
           }}
         />
       </Stack.Navigator>

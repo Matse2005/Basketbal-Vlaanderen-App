@@ -9,6 +9,7 @@ import {
   RefreshControl,
   SafeAreaView,
   Linking,
+  Platform,
 } from "react-native";
 import { Icon, Image } from "react-native-elements";
 
@@ -51,7 +52,6 @@ function ClubInfoScreen({ route, navigation }) {
   };
 
   return (
-    // <Text>Hello World</Text>
     <View className="w-full h-full px-3">
       {/* <View className="flex flex-row w-auto p-2 mx-3 mt-2 bg-white rounded-lg">
         <TouchableOpacity className="items-center justify-center w-1/2 px-3 py-2 text-center bg-orange-400 rounded">
@@ -103,7 +103,7 @@ function ClubInfoScreen({ route, navigation }) {
                   Stamnummer {item.stamNr}
                 </Text>
               </View>
-              <View className="px-3 space-y-2">
+              <View className="space-y-2">
                 <Text className="text-lg font-bold">Contactgegevens</Text>
                 <TouchableOpacity
                   onPress={() => {
@@ -120,11 +120,12 @@ function ClubInfoScreen({ route, navigation }) {
                   className="flex flex-row items-center justify-between px-3 py-2 bg-white rounded"
                 >
                   <View className="items-center justify-center w-8 h-8 bg-gray-100 rounded">
-                    <Text className="text-lg font-bold text-gray-500">
+                    <Text className="items-center justify-center text-lg font-bold text-center text-gray-500">
                       <Icon
                         name="web"
                         type="foundation"
-                        className="mt-1.5"
+                        // className="mt-1.5 "
+                        className={Platform.OS == "ios" ? "mt-1.5" : "mt-0"}
                         color="#6b7280"
                         solid={true}
                         size={21}
@@ -140,11 +141,11 @@ function ClubInfoScreen({ route, navigation }) {
                   className="flex flex-row items-center justify-between px-3 py-2 bg-white rounded"
                 >
                   <View className="items-center justify-center w-8 h-8 bg-gray-100 rounded">
-                    <Text className="text-lg font-bold text-gray-500">
+                    <Text className="items-center justify-center text-lg font-bold text-center text-gray-500">
                       <Icon
                         name="mail"
                         type="ionicon"
-                        className="mt-1.5"
+                        className={Platform.OS == "ios" ? "mt-1.5" : "mt-0"}
                         color="#6b7280"
                         solid={true}
                         size={19}
@@ -155,11 +156,11 @@ function ClubInfoScreen({ route, navigation }) {
                 </TouchableOpacity>
                 <View className="flex flex-row items-center justify-between px-3 py-2 bg-white rounded">
                   <View className="items-center justify-center w-8 h-8 bg-gray-100 rounded">
-                    <Text className="text-lg font-bold text-gray-500">
+                    <Text className="items-center justify-center text-lg font-bold text-center text-gray-500">
                       <Icon
                         name="navigate"
                         type="ionicon"
-                        className="mt-1.5"
+                        className={Platform.OS == "ios" ? "mt-1.5" : "mt-0"}
                         color="#6b7280"
                         solid={true}
                         size={21}
@@ -169,66 +170,27 @@ function ClubInfoScreen({ route, navigation }) {
                   <Text className="text-gray-500">{item.plaats}</Text>
                 </View>
               </View>
-              <View className="px-3 space-y-2">
-                <Text className="text-lg font-bold">Sporthallen</Text>
-                {/* <TouchableOpacity
-                  onPress={() => {
-                    Linking.openURL(item.website);
-                  }}
-                  className="flex flex-row items-center justify-between px-3 py-2 bg-white rounded"
-                >
-                  <View className="items-center justify-center w-8 h-8 bg-gray-100 rounded">
-                    <Text className="text-lg font-bold text-gray-500">
-                      <Icon
-                        name="location"
-                        type="ionicon"
-                        className="mt-1.5"
-                        color="#6b7280"
-                        solid={true}
-                        size={21}
-                      />
-                    </Text>
-                  </View>
-                  <Text className="text-gray-500">{item.website}</Text>
-                </TouchableOpacity> */}
+              <View className="">
+                <Text className="mb-2 text-lg font-bold">Sporthallen</Text>
 
                 {item.accomms.map((location, index) => {
                   return (
-                    // <TouchableOpacity
-                    //   key={index}
-                    //   // onPress={() => {
-                    //   //   Linking.openURL(item.website);
-                    //   // }}
-                    //   className="flex flex-row items-center justify-between px-3 py-2 bg-white rounded"
-                    // >
-                    //   <View className="items-center justify-center w-8 h-8 bg-gray-100 rounded">
-                    //     <Text className="text-lg font-bold text-gray-500">
-                    //       <Icon
-                    //         name="location"
-                    //         type="ionicon"
-                    //         className="mt-1.5"
-                    //         color="#6b7280"
-                    //         solid={true}
-                    //         size={21}
-                    //       />
-                    //     </Text>
-                    //   </View>
-                    //   <Text className="text-gray-500">{location.naam}</Text>
-                    // </TouchableOpacity>
                     <TouchableOpacity
                       onPress={() => {
                         toggleExpansion(index);
                       }}
                       key={index}
-                      className="px-3 py-2 bg-white rounded"
+                      className="px-3 py-2 mb-2 bg-white rounded"
                     >
                       <View className="flex flex-row items-center justify-between ">
                         <View className="items-center justify-center w-8 h-8 bg-gray-100 rounded">
-                          <Text className="text-lg font-bold text-gray-500">
+                          <Text className="items-center justify-center text-lg font-bold text-center text-gray-500">
                             <Icon
                               name="location"
                               type="ionicon"
-                              className="mt-1.5"
+                              className={
+                                Platform.OS == "ios" ? "mt-1.5" : "mt-0"
+                              }
                               color="#6b7280"
                               solid={true}
                               size={21}

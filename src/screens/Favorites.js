@@ -115,7 +115,7 @@ function FavoritesScreen({ navigation }) {
                 <TouchableOpacity
                   className="box-border w-full p-5 bg-white rounded-lg "
                   onPress={() => {
-                    navigation.navigate("Club", {
+                    navigation.navigate("Team", {
                       guid: team.guid,
                     });
                   }}

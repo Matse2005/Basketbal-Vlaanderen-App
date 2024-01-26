@@ -9,6 +9,7 @@ import {
   RefreshControl,
   SafeAreaView,
 } from "react-native";
+import GameComponent from "../components/GameComponent";
 import { Icon, Image } from "react-native-elements";
 
 function GamesScreen({ route, navigation }) {
@@ -20,15 +21,15 @@ function GamesScreen({ route, navigation }) {
   const { givenDate } = route.params;
 
   const [date, setDate] = useState(
-    givenDate ??
-      //   new Date()
-      //     .toLocaleDateString("nl-BE", {
-      //       year: "numeric",
-      //       month: "numeric",
-      //       day: "numeric",
-      //     })
-      //     .replaceAll("/", "-")
-      "01-02-2024"
+    // givenDate ??
+    //   new Date()
+    //     .toLocaleDateString("nl-BE", {
+    //       year: "numeric",
+    //       month: "numeric",
+    //       day: "numeric",
+    //     })
+    //     .replaceAll("/", "-")
+    "27-01-2024"
   );
 
   // console.log(date);
@@ -170,8 +171,8 @@ function GamesScreen({ route, navigation }) {
           new Date(
             item.datumString.split("-").reverse().join("-")
           ).toString() ==
-          // new Date(date.split("-").reverse().join("-")).toString()
-          new Date("03-02-2024".split("-").reverse().join("-")).toString()
+          new Date(date.split("-").reverse().join("-")).toString()
+        // new Date("03-02-2024".split("-").reverse().join("-")).toString()
       );
 
       // getDates(items);
@@ -360,77 +361,19 @@ function GamesScreen({ route, navigation }) {
             }
             disableVirtualization
             renderItem={({ item }) => (
-              <TouchableOpacity
-                className="box-border w-full p-5 mb-4 bg-white rounded-lg "
-                onPress={() => {
-                  navigation.navigate("Match", {
-                    guid: item.guid,
-                  });
+              <GameComponent
+                game={{
+                  guid: item.guid,
+                  thuis: { guid: item.tTGUID, naam: item.tTNaam },
+                  uit: { guid: item.tUGUID, naam: item.tUNaam },
+                  datum: item.datumString,
+                  tijd: item.beginTijd,
+                  poule: item.pouleNaam,
+                  uitslag: item.uitslag,
+                  location: item.accNaam,
                 }}
-              >
-                <View className="flex flex-row items-center justify-between w-full">
-                  <View className="items-center justify-center flex-1 w-auto space-y-3">
-                    <Image
-                      PlaceholderContent={<ActivityIndicator />}
-                      placeholderStyle={{ backgroundColor: "#fff" }}
-                      cachePolicy="memory"
-                      source={{
-                        uri:
-                          "https://vbl.wisseq.eu/vbldataOrganisation/BVBL" +
-                          item.tTGUID.match(/\d+/g)[0] +
-                          ".jpg",
-                      }}
-                      resizeMode="contain"
-                      className=" w-11 h-11"
-                    />
-                    <Text className=" text-[10px] text-center">
-                      {item.tTNaam}
-                    </Text>
-                  </View>
-
-                  <View className="items-center justify-center flex-1 w-auto space-y-1">
-                    <Text className="text-lg font-bold text-center text-orange-400">
-                      {item.uitslag == ""
-                        ? item.beginTijd.replace(".", ":")
-                        : item.uitslag.replace("- ", " / ")}
-                    </Text>
-                    <Text className="text-xs text-center text-gray-500 uppercase ">
-                      {Intl.DateTimeFormat("nl", {
-                        // weekday: "long",
-                        month: "short",
-                        day: "numeric",
-                      }).format(
-                        new Date(
-                          `${item.datumString.split("-").reverse().join("-")}`
-                        )
-                      )}
-                    </Text>
-                  </View>
-
-                  <View className="items-center justify-center flex-1 w-auto space-y-3">
-                    <Image
-                      PlaceholderContent={<ActivityIndicator />}
-                      placeholderStyle={{ backgroundColor: "#fff" }}
-                      cachePolicy="memory"
-                      source={{
-                        uri:
-                          "https://vbl.wisseq.eu/vbldataOrganisation/BVBL" +
-                          item.tUGUID.match(/\d+/g)[0] +
-                          ".jpg",
-                      }}
-                      resizeMode="contain"
-                      className=" w-11 h-11"
-                    />
-                    <Text className=" text-[10px] text-center">
-                      {item.tUNaam}
-                    </Text>
-                  </View>
-                </View>
-                <View className="flex flex-row items-center justify-center w-full mt-2">
-                  <Text className="text-xs text-gray-500">{item.accNaam}</Text>
-                </View>
-              </TouchableOpacity>
-              // <TouchableOpacity className=""></TouchableOpacity>
+                navigation={navigation}
+              />
             )}
           ></FlatList>
         )}

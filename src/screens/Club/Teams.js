@@ -9,6 +9,7 @@ import {
   RefreshControl,
   SafeAreaView,
   Linking,
+  Platform,
 } from "react-native";
 import { Icon, Image } from "react-native-elements";
 
@@ -98,7 +99,7 @@ function ClubTeamsScreen({ route, navigation }) {
                   Stamnummer {item.stamNr}
                 </Text>
               </View>
-              <View className="px-3 mb-2 space-y-2">
+              <View className="mb-2 space-y-2">
                 <Text className="text-lg font-bold">Teams</Text>
                 {item.teams.map((team, index) => {
                   return (
@@ -106,7 +107,7 @@ function ClubTeamsScreen({ route, navigation }) {
                       <TouchableOpacity
                         className="box-border w-full p-5 bg-white rounded-lg "
                         onPress={() => {
-                          navigation.navigate("ClubInfo", {
+                          navigation.navigate("Team", {
                             guid: team.guid,
                           });
                         }}

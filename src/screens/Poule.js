@@ -4,6 +4,7 @@ import {
   FlatList,
   Text,
   View,
+  Platform,
   RefreshControl,
 } from "react-native";
 
@@ -85,8 +86,8 @@ function PouleScreen({ route }) {
                     >
                       <View className="flex flex-row items-center w-2/3 space-x-2 break-words">
                         <View className="items-center justify-center w-8 h-8 bg-gray-100 rounded">
-                          <Text className="text-lg font-bold text-gray-500">
-                            {team.rangNr.replace(" ", "")}
+                          <Text className="items-center justify-center text-lg font-bold text-center text-gray-500">
+                            {team.rangNr.replaceAll(" ", "")}
                           </Text>
                         </View>
                         <Text className="text-gray-500 break-words">
