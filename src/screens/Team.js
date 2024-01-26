@@ -99,7 +99,7 @@ function TeamScreen({ route }) {
         tabBarLabelStyle: {
           fontSize: 16,
           fontWeight: 700,
-          textTransform: "capitalize",
+          textTransform: "none",
         },
         tabBarActiveTintColor: "#fb923c",
         tabBarInactiveTintColor: "#374151",
@@ -137,7 +137,7 @@ function TeamScreen({ route }) {
       <Tab.Screen
         name="Players"
         component={PlayersScreen}
-        options={{ title: "Spelers" }}
+        options={{ title: "Spelers/TV" }}
         initialParams={{
           guid: guid,
         }}
