@@ -8,14 +8,17 @@ import {
   ScrollView,
   SafeAreaView,
 } from "react-native";
+import { getFavorites, storeFavorites } from "../logic/Favorites";
 
 function FavoritesScreen({ navigation }) {
   const [refreshing, setRefreshing] = React.useState(false);
   const [isLoading, setLoading] = useState(true);
   const [clubs, setClubs] = useState([]);
   const [teams, setTeams] = useState([]);
+  var favorites = null;
 
-  const favorites = [
+  // Temporarly
+  var favoritesDefault = [
     "club_BVBL1255",
     "team_BVBL1171J21%20%201",
     "team_BVBL1171HSE%20%202",
@@ -24,28 +27,11 @@ function FavoritesScreen({ navigation }) {
     "team_BVBL1171J18%20%201",
   ];
 
-  // const storeData = async (value) => {
-  //   try {
-  //     const jsonValue = JSON.stringify(value);
-  //     await AsyncStorage.setItem("favorites", jsonValue);
-  //   } catch (e) {
-  //     // saving error
-  //   }
-  // };
-
-  // const getData = async () => {
-  //   try {
-  //     const jsonValue = await AsyncStorage.getItem("favorites");
-  //     return jsonValue != null ? JSON.parse(jsonValue) : null;
-  //   } catch (e) {
-  //     // error reading value
-  //   }
-  // };
-
-  // storeData(favorites);
+  storeFavorites(favoritesDefault);
 
   const getTeams = async () => {
     var items = [];
+    favorites == null ? (favorites = await getFavorites()) : null;
 
     for (const favorite of favorites) {
       if (favorite.split("_")[0] == "team") {
@@ -63,6 +49,7 @@ function FavoritesScreen({ navigation }) {
 
   const getClubs = async () => {
     var items = [];
+    favorites == null ? (favorites = await getFavorites()) : null;
 
     for (const favorite of favorites) {
       if (favorite.split("_")[0] == "club") {

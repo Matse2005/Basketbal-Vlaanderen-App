@@ -11,30 +11,35 @@ import {
 } from "react-native";
 import GameComponent from "../components/GameComponent";
 import { Icon, Image } from "react-native-elements";
+import { getFavorites, storeFavorites } from "../logic/Favorites";
 
 function GamesScreen({ route, navigation }) {
   const [refreshing, setRefreshing] = React.useState(false);
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
   var [dates, setDates] = useState({});
+  var favorites = null;
 
   const { givenDate } = route.params;
 
   const [date, setDate] = useState(
     // givenDate ??
-    //   new Date()
-    //     .toLocaleDateString("nl-BE", {
-    //       year: "numeric",
-    //       month: "numeric",
-    //       day: "numeric",
-    //     })
-    //     .replaceAll("/", "-")
-    "27-01-2024"
+    // new Date()
+    //   .toLocaleDateString("nl-BE", {
+    //     year: "numeric",
+    //     month: "numeric",
+    //     day: "numeric",
+    //   })
+    //   .toString()
+    //   .replaceAll("/", "-")
+    "3-2-2024"
   );
 
   // console.log(date);
 
-  const favorites = [
+  // Temporarly
+  var favoritesDefault = [
+    "club_BVBL1255",
     "team_BVBL1171J21%20%201",
     "team_BVBL1171HSE%20%202",
     "team_BVBL1171DSE%20%201",
@@ -42,25 +47,8 @@ function GamesScreen({ route, navigation }) {
     "team_BVBL1171J18%20%201",
   ];
 
-  // const storeData = async (value) => {
-  //   try {
-  //     const jsonValue = JSON.stringify(value);
-  //     await AsyncStorage.setItem("favorites", jsonValue);
-  //   } catch (e) {
-  //     // saving error
-  //   }
-  // };
-
-  // const getData = async () => {
-  //   try {
-  //     const jsonValue = await AsyncStorage.getItem("favorites");
-  //     return jsonValue != null ? JSON.parse(jsonValue) : null;
-  //   } catch (e) {
-  //     // error reading value
-  //   }
-  // };
-
-  // storeData(favorites);
+  storeFavorites(favoritesDefault);
+  // console.log(favorites);
 
   function findClosestDate(targetDateString, dateArray) {
     const targetDate = new Date(
@@ -72,9 +60,9 @@ function GamesScreen({ route, navigation }) {
       (dateString) => new Date(dateString.split("-").reverse().join("-"))
     );
 
-    // possibleDates.forEach((dateString) =>
-    //   console.log(new Date(dateString.split("-").reverse().join("-")))
-    // );
+    possibleDates.forEach((dateString, index) => {
+      if (dateString == targetDate) return dateArray[index];
+    });
 
     // Calculate the differences between each date and the target date
     const differences = possibleDates.map((date) => date - targetDate);
@@ -88,11 +76,7 @@ function GamesScreen({ route, navigation }) {
     // Find the index of the closest date
     const closestDateIndex = differences.indexOf(minDifference);
 
-    // Return the closest date
-    // console.log(targetDate);
-    // console.log(dateArray[closestDateIndex]);
     return dateArray[closestDateIndex];
-    // return "27-01-2024";
   }
 
   const getDates = async (matches) => {
@@ -107,8 +91,6 @@ function GamesScreen({ route, navigation }) {
 
     if (!allDates.includes(date)) {
       setDate(findClosestDate(date, allDates));
-      // setDate("27-01-2024");
-      // console.log(date);
     }
 
     for (let i = 0; i < allDates.length; i++) {
@@ -135,6 +117,8 @@ function GamesScreen({ route, navigation }) {
   const getMatches = async () => {
     try {
       var items = [];
+      favorites == null ? (favorites = await getFavorites()) : null;
+      // console.log(favorites);
 
       for (const favorite of favorites) {
         if (favorite.split("_")[0] == "team") {
