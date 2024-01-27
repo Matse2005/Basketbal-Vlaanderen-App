@@ -4,16 +4,14 @@
     "slug": "basketbal-vlaanderen",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/vbl/icon.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "be.matsevh.basketbal.vlaanderen"

@@ -2738,3 +2738,1309 @@ sportModule.controller("RelatieDetailController", [
       });
   },
 ]);
+
+sportModule.filter("isSpelerOrBeg", function () {
+  return function (e, t) {
+    if (e && e.length)
+      return e.filter(function (e) {
+        return 0 === t ? e.SortCode < 1e3 : e.SortCode >= 1e3;
+      });
+  };
+}),
+  sportModule.controller("DwfDetailController", [
+    "$rootScope",
+    "$scope",
+    "$http",
+    "WQData",
+    "wqGlobal",
+    function (e, t, r, n, a) {
+      (t.sportModuleBaseUrl = e.sportModuleBaseUrl),
+        (t.sportModuleClubLogoUrlPrefix = e.sportModuleClubLogoUrlPrefix);
+      var i = { All: [], S: [], C: [], A: [], D: [] },
+        o = { All: [], S: [], C: [], A: [], D: [] },
+        u = [];
+      function s(e) {
+        e.lUitsluiting = !1;
+        var t = 0,
+          r = 0,
+          n = 0,
+          a = 0;
+        angular.forEach(e.sFouten, function (e) {
+          switch (e.substring(0, 1)) {
+            case "P":
+              0;
+              break;
+            case "C":
+              r++, n++;
+              break;
+            case "B":
+              n++;
+              break;
+            case "T":
+            case "U":
+              0, t++;
+              break;
+            case "D":
+            case "F":
+              a++;
+          }
+        }),
+          (t >= 2 || r >= 2 || n >= 3 || a > 0) && (e.sFouten[5] = "GD");
+      }
+      function l(t) {
+        (e.CurrRelNr = t.RelNr),
+          (e.CurrRelGUID = t.RelGUID),
+          (e.CurrNaam = t.Naam),
+          (e.CurrGebDat = t.GebDat),
+          (e.CurrMA = t.MA),
+          (e.CurrTGuidNivo = t.TGuidNivo),
+          (e.CurrRugNum = t.RugNr),
+          (e.CurrAanvChk = "Y" == t.RolAanv),
+          (e.Curr1eVijf = "Y" == t.Rol1e5),
+          (e.CurrFunctie = t.Functie),
+          (e.CurrChecked = "Y" == t.Checked),
+          (e.CurrOpmerking = t.Opmerking),
+          (e.CurrFouten = t.Fouten),
+          (e.CurrReiskosten = parseFloat(t.Reiskosten)),
+          (e.CurrVergoeding = parseFloat(t.Vergoeding));
+      }
+      function d(r) {
+        if (
+          ("T" != r || t.loadTeamNeededThuis) &&
+          ("U" != r || t.loadTeamNeededUit)
+        ) {
+          e.teamThuisGUID;
+          g(
+            "RTeamDetailByGuid",
+            "T" == r ? e.teamThuisGUID : e.teamUitGUID,
+            r,
+            null
+          );
+        }
+      }
+      function f(e, r) {
+        !(
+          ("T" == e && !1 === t.loadLedenNeededThuis) ||
+          ("U" == e && !1 === t.loadLedenNeededUit)
+        )
+          ? g("RRelByOrg", "nvtteamGuid", e, r)
+          : null != r && "TV" == r && d(e);
+      }
+      function g(r, u, s, l) {
+        var f = null,
+          g = null;
+        ("T" != s && "O" != s) ||
+          ((f = e.clubThuisGUID), (g = i), (t.loadLedenNeededThuis = !1)),
+          "U" == s &&
+            ((f = e.clubUitGUID), (g = o), (t.loadLedenNeededUit = !1));
+        try {
+          var c,
+            T = new XMLHttpRequest();
+          T.addEventListener("readystatechange", function () {
+            if (4 === this.readyState) {
+              T.response;
+              if (200 == this.status) {
+                t.ResponseText = this.responseText;
+                var n = JSON.parse(this.responseText);
+                if (
+                  ("RRelByOrg" == r &&
+                    (n.forEach(function (e) {
+                      var t = e.orgLMS.substring(0, 6),
+                        r = !1,
+                        n = !1;
+                      switch (t) {
+                        case "BVBLSL":
+                          var a = e.orgLMS.substring(6, 7);
+                          (e.orgLMS = e.orgLMS.substring(8) + a + " Speler "),
+                            (r = !0),
+                            "HSE,DSE,J21,M19,J18,M21".indexOf(e.cat) > -1 &&
+                              (n = !0);
+                          break;
+                        case "BVBLRS":
+                          e.orgLMS = e.orgLMS.substring(8) + ", R-BAB ";
+                          break;
+                        case "BVBLAL":
+                          (e.orgLMS = e.orgLMS.substring(8) + ", Lid"),
+                            (n = !0);
+                          break;
+                        case "BVBLCO":
+                          e.orgLMS = e.orgLMS.substring(8) + ", Coach";
+                          break;
+                        default:
+                          e.orgLMS = e.orgLMS.substring(8) + ", " + t;
+                      }
+                      (e.volledigeNaam = e.vnaam + " " + e.naam),
+                        (e.uCat = e.cat),
+                        r && g.S.push(e),
+                        n && g.D.push(e);
+                    }),
+                    (g.All = n),
+                    "TV" != l && (t.leden = "O" == s ? g.All : g.S),
+                    null != l && "TV" == l && d(s),
+                    t.$apply()),
+                  "RTeamDetailByGuid" == r)
+                ) {
+                  var i;
+                  (data1 = n),
+                    0 === data1.length && a.wqAlert("Team niet gevonden!"),
+                    "T" == s && (t.loadTeamNeededThuis = !1),
+                    "U" == s && (t.loadTeamNeededUit = !1);
+                  try {
+                    (i = data1[0]),
+                      (g.C = []),
+                      (g.A = []),
+                      i.tvlijst.forEach(function (e) {
+                        var t = "Coach" == e.tvCaC ? "C" : "A",
+                          r = g.All.filter(function (t) {
+                            return t.relGuid === e.relGuid;
+                          });
+                        if (r.length > 0)
+                          g[t].push(r[0]), "C" == t && g.A.push(r[0]);
+                        else {
+                          var n = {
+                            gebdat: "-",
+                            mvo: "-",
+                            volledigeNaam: e.naam,
+                            lidNr: e.relGuid,
+                            relGuid: e.relGuid,
+                            uCat: "-",
+                            orgLMS: "-",
+                          };
+                          g[t].push(n), "C" == t && g.A.push(n);
+                        }
+                      }),
+                      (t.leden = g[e.CurrFunctie]);
+                  } catch (e) {}
+                  t.$apply();
+                }
+              } else
+                0 == this.status
+                  ? a.wqAlert("Verbinding met server niet mogelijk!")
+                  : a.wqAlert("Username onbekend en/of wachtwoord onjuist!");
+            }
+          });
+          var p = t.sportModuleBaseUrl + "/CbGetListDyna";
+          T.open("PUT", p, !0),
+            T.setRequestHeader("authorization", n.getAutheader()),
+            T.setRequestHeader(
+              "Content-type",
+              "application/json; charset=utf-8"
+            );
+          var m = {
+            Naam: "tGAndre",
+            WQVer: "na" + t.currentversion,
+            GUID: "Gandre1",
+            TsetExtra: "test",
+          };
+          "RTeamDetailByGuid" == r &&
+            (m = {
+              AuthHeader: n.getAutheader(),
+              WQVer: t.currentversion,
+              WedGUID: t.guid,
+              TeamGUID: u,
+              CRUD: "RTeamDetailByGuid",
+            }),
+            "RRelByOrg" == r &&
+              (m = {
+                AuthHeader: n.getAutheader(),
+                WQVer: t.currentversion,
+                WedGUID: t.guid,
+                TeamGUID: f,
+                CRUD: "RRelByOrg",
+              }),
+            (c = JSON.stringify(m)),
+            T.send(c);
+        } catch (e) {}
+      }
+      function c(e) {
+        var t = e.orguid1,
+          r = e.teams;
+        return (
+          null != r &&
+            r.length > 0 &&
+            r.forEach(function (r) {
+              "Speler" == r.info &&
+                r.teamGuid.substring(0, 8) == e.orguid1 &&
+                (t.length < 9
+                  ? (t = r.teamGuid + ":" + r.speelNivo)
+                  : (t += ";" + r.teamGuid + ":" + r.speelNivo));
+            }),
+          ";" == e.orgLMS.substring(10, 11) && (t = "DS" + t),
+          t
+        );
+      }
+      function T() {
+        (e.InfoSpelerMetMelding = !1),
+          (e.TeltAlsInvaller = !1),
+          (e.currInfoSpelerOnjuist = "\n");
+        var t = !1;
+        if (-1 != e.CurrRelGUID.indexOf("NA"))
+          return (
+            (e.InfoSpelerMetMelding = !0),
+            void (e.currInfoSpelerOnjuist += "Handmatig toegevoegd\n")
+          );
+        if (!("OR" == e.pouleGUID.substring(12, 14))) {
+          var r = "T" == e.TUO ? e.teamThuisGUID : e.teamUitGUID,
+            n = r.substring(8, 11);
+          if (null != e.CurrTGuidNivo && "" != e.CurrTGuidNivo) {
+            if (e.CurrTGuidNivo.indexOf(r) >= 0) return;
+            if (-1 == e.CurrTGuidNivo.indexOf(r.substring(0, 8)))
+              return (
+                (e.InfoSpelerMetMelding = !0),
+                void (e.currInfoSpelerOnjuist +=
+                  "Geen lidmaatschap bij de club\n")
+              );
+            "DS" == e.CurrTGuidNivo.substring(0, 2) &&
+              ((e.InfoSpelerMetMelding = !0),
+              (e.currInfoSpelerOnjuist +=
+                "Dubbelspeler mag alleen in betreffende team meedoen!\n"),
+              (t = !0));
+          }
+          var a = "na",
+            i = "na";
+          null != e.CurrGebDat &&
+            e.CurrGebDat.length > 12 &&
+            (i = e.CurrGebDat.substring(12, 15));
+          var o = e.pouleGUID.substring(12, 19);
+          "B" == o.substring(0, 1)
+            ? ((a = o.substring(3, 6)), o.substring(6, 7))
+            : ((a = o.substring(2, 5)), o.substring(5, 6));
+          var u = !1,
+            s = a.substring(0, 1),
+            l = i.substring(0, 1);
+          if (
+            ((("H" == s && ("H" == l || "J" == l || "M" == l)) ||
+              ("D" == s && ("D" == l || "M" == l)) ||
+              ("J" == s && ("J" == l || "M" == l)) ||
+              ("M" == s && "M" == l) ||
+              ("G" == s && ("J" == l || "M" == l))) &&
+              (u = !0),
+            u ||
+              ((e.InfoSpelerMetMelding = !0),
+              (e.currInfoSpelerOnjuist += "Geslacht onjuist\n"),
+              (t = !0)),
+            null != e.dwfI4Speler)
+          ) {
+            var d = "Max " + e.dwfI4Speler.maxSpelersAndereCat,
+              f = "na",
+              g = !0;
+            if (
+              (e.CurrGebDat.length > 9 &&
+                (f =
+                  e.CurrGebDat.substring(6, 10) +
+                  e.CurrGebDat.substring(3, 5) +
+                  e.CurrGebDat.substring(0, 2)),
+              "na" != f && e.dwfI4Speler.sMinGebDat > f && (g = !1),
+              "na" != f && e.dwfI4Speler.sMaxGebDat < f && (g = !1),
+              0 != e.dwfI4Speler.minLeeftijd && "na" != f)
+            ) {
+              var c = (function (e, t) {
+                var r = new Date(t),
+                  n = new Date(e),
+                  a = r.getFullYear() - n.getFullYear(),
+                  i = r.getMonth() - n.getMonth();
+                (i < 0 || (0 === i && r.getDate() < n.getDate())) && a--;
+                return a;
+              })(
+                f.substring(0, 4) +
+                  "-" +
+                  f.substring(4, 6) +
+                  "-" +
+                  f.substring(6, 8),
+                e.datumString.substring(6, 10) +
+                  "-" +
+                  e.datumString.substring(3, 5) +
+                  "-" +
+                  e.datumString.substring(0, 2)
+              );
+              isNaN(c) || (c < e.dwfI4Speler.minLeeftijd && (g = !1));
+            }
+            if ("Y" == e.dwfI4Speler.stijgenDalen) {
+              var T = e.dwfI4Speler.maxSpelersAndereCat > 0 ? "Mog1" : "Mog2",
+                p = e.dwfI4Speler.speelNivo;
+              if (
+                null == e.CurrTGuidNivo ||
+                "" == e.CurrTGuidNivo ||
+                8 == e.CurrTGuidNivo.length
+              )
+                g || ((e.InfoSpelerMetMelding = !0), (t = !0));
+              else {
+                var m = e.CurrTGuidNivo.length > 11,
+                  h = parseInt(e.CurrTGuidNivo.substring(15));
+                -1 == h && (h = 999999);
+                var C = e.CurrTGuidNivo.substring(8, 11);
+                "Mog1" == T
+                  ? m &&
+                    (h <= p
+                      ? ((e.InfoSpelerMetMelding = !0), (t = !0))
+                      : n == C
+                      ? ((e.InfoSpelerMetMelding = !0),
+                        (e.TeltAlsInvaller = !0),
+                        (e.currInfoSpelerOnjuist += d + "!\n"))
+                      : g || ((e.InfoSpelerMetMelding = !0), (t = !0)))
+                  : m && h < p
+                  ? ((e.InfoSpelerMetMelding = !0), (t = !0))
+                  : g || ((e.InfoSpelerMetMelding = !0), (t = !0));
+              }
+            } else i == a || g || ((e.InfoSpelerMetMelding = !0), (t = !0));
+          }
+          t &&
+            (e.currInfoSpelerOnjuist +=
+              "Voldoet niet op basis van leeftijd/geslacht of spelerslijst(en) voor deze wedstrijd!\n");
+        }
+      }
+      (t.init = function (r) {
+        (t.currentversion = "ddc1.1"),
+          (t.guid = r),
+          (null != t.guid && "" != t.guid) ||
+            "" == e.LastWedGUID ||
+            (t.guid = e.LastWedGUID),
+          (t.Andre = "T"),
+          (t.loadLedenNeededThuis = !0),
+          (t.loadLedenNeededUit = !0),
+          (t.loadTeamNeededThuis = !0),
+          (t.loadTeamNeededUit = !0),
+          (t.loadTafelNeeded = !0),
+          (t.loadOfficialsNeeded = !0),
+          (t.loadDeelDone = !1),
+          (t.loadOffiDone = !1),
+          (t.loadVgngDone = !1),
+          (e.CurrNaam = ""),
+          (e.CurrAanvChk = "N"),
+          (e.CurrCoChk = "N"),
+          (e.CurrAcChk = "N"),
+          (e.CurrDelegChk = "N"),
+          (e.CurrReiskosten = ""),
+          (e.CurrVergoeding = ""),
+          (e.CurrChecked = !1),
+          (e.CurrOpmerking = ""),
+          (e.CurrFouten = ""),
+          (t.relnotfound = !1),
+          (t.showSupportInfo = !1),
+          (e.dwfVerslagMember = !1),
+          (e.userRelGuid = n.getRelguid());
+      }),
+        (t.loadDwfDeelMetXHR = function (r) {
+          if (
+            ((e.userRelGuid = n.getRelguid()),
+            ("GET" != r || !t.loadDeelDone) &&
+              (e.verslagIsPublic ||
+                (null !== e.userRelGuid && "na" !== e.userRelGuid)))
+          )
+            try {
+              var i,
+                o = new XMLHttpRequest();
+              o.addEventListener("readystatechange", function () {
+                if (4 === this.readyState) {
+                  o.response;
+                  200 == this.status
+                    ? ((t.ResponseText = this.responseText),
+                      (t.data = JSON.parse(this.responseText)),
+                      (t.Tthuis = t.data.TtDeel),
+                      angular.forEach(t.Tthuis, function (e, r) {
+                        (t.TextFill = "white"), (e.Fill = t.TextFill);
+                      }),
+                      (t.Tuit = t.data.TuDeel),
+                      angular.forEach(t.Tuit, function (e, r) {
+                        (t.TextFill = "white"), (e.Fill = t.TextFill);
+                      }),
+                      e.authorized4Match &&
+                        !t.loadDeelDone &&
+                        ((e.TUO = "T"),
+                        angular.forEach(t.Tthuis, function (r) {
+                          "S" == r.Functie &&
+                            (l(r),
+                            T(),
+                            e.InfoSpelerMetMelding
+                              ? (null != r.Fouten &&
+                                  "" != r.Fouten &&
+                                  "Y" != r.Fouten) ||
+                                ((r.Fouten = e.TeltAlsInvaller ? "Max 2" : "I"),
+                                (e.CurrFouten = r.Fouten),
+                                t.loadDwfDeelMetXHR("MOD"))
+                              : ("Y" != r.Fouten && "I" != r.Fouten) ||
+                                ((r.Fouten = ""),
+                                (e.CurrFouten = ""),
+                                t.loadDwfDeelMetXHR("MOD")));
+                        }),
+                        (e.TUO = "U"),
+                        angular.forEach(t.Tuit, function (r) {
+                          "S" == r.Functie &&
+                            (l(r),
+                            T(),
+                            e.InfoSpelerMetMelding
+                              ? (null != r.Fouten &&
+                                  "" != r.Fouten &&
+                                  "Y" != r.Fouten) ||
+                                ((r.Fouten = e.TeltAlsInvaller ? "Max 2" : "I"),
+                                (e.CurrFouten = r.Fouten),
+                                t.loadDwfDeelMetXHR("MOD"))
+                              : ("Y" != r.Fouten && "I" != r.Fouten) ||
+                                ((r.Fouten = ""),
+                                (e.CurrFouten = ""),
+                                t.loadDwfDeelMetXHR("MOD")));
+                        })),
+                      (t.loadDeelDone = !0),
+                      "GET4STAT" == r && t.loadDwf4Statsistiek("GET4STAT"),
+                      (t.tt = ""),
+                      t.$apply())
+                    : 400 == this.status &&
+                      -1 !== this.responseText.indexOf("Geen SBO Official")
+                    ? a.wqAlert("Geen SBO official. Inloggen niet mogelijk!")
+                    : 0 == this.status
+                    ? a.wqAlert("Verbinding met server niet mogelijk!")
+                    : a.wqAlert("Username onbekend en/of wachtwoord onjuist!");
+                }
+              });
+              var u = t.sportModuleBaseUrl + "/DwfDeelByWedGuid";
+              o.open("PUT", u, !0),
+                o.setRequestHeader("authorization", n.getAutheader()),
+                o.setRequestHeader(
+                  "Content-type",
+                  "application/json; charset=utf-8"
+                );
+              var s = {
+                Naam: "tGAndre",
+                WQVer: t.currentversion,
+                GUID: "Gandre1",
+                TsetExtra: "test",
+              };
+              ("GET" != r && "GET4STAT" != r) ||
+                (s = {
+                  AuthHeader: n.getAutheader(),
+                  WQVer: t.currentversion,
+                  WedGUID: t.guid,
+                  CRUD: "R",
+                }),
+                ("ADD" != r && "MOD" != r) ||
+                  (s = {
+                    AuthHeader: n.getAutheader(),
+                    WQVer: t.currentversion,
+                    WedGUID: t.guid,
+                    Uitslag: t.matchUitslag,
+                    TU: e.TUO,
+                    CRUD: "U",
+                    RelGUID: e.CurrRelGUID,
+                    RelNr: e.CurrRelNr,
+                    Naam: e.CurrNaam,
+                    GebDat: e.CurrGebDat,
+                    RugNr: e.CurrRugNum,
+                    Rol1e5: e.Curr1eVijf ? "Y" : "N",
+                    RolAanv: e.CurrAanvChk ? "Y" : "N",
+                    Functie: e.CurrFunctie,
+                    MA: e.CurrMA,
+                    TGuidNivo: e.CurrTGuidNivo,
+                    Checked: e.CurrChecked ? "Y" : "N",
+                    Opmerking: e.CurrOpmerking,
+                    Fouten: e.CurrFouten,
+                  }),
+                "REM" == r &&
+                  (s = {
+                    AuthHeader: n.getAutheader(),
+                    WQVer: t.currentversion,
+                    WedGUID: t.guid,
+                    Uitslag: t.matchUitslag,
+                    TU: e.TUO,
+                    CRUD: "D",
+                    RelGUID: e.CurrRelGUID,
+                    Functie: e.CurrFunctie,
+                  }),
+                "RESET" == r &&
+                  (s = {
+                    AuthHeader: n.getAutheader(),
+                    WQVer: t.currentversion,
+                    WedGUID: t.guid,
+                    TU: e.TUO,
+                    CRUD: "F",
+                  }),
+                (i = JSON.stringify(s)),
+                o.send(i);
+            } catch (e) {}
+        }),
+        (t.resetDeelnrs = function (e) {
+          $("#MainForm").modal("hide"), t.loadDwfDeelMetXHR("RESET");
+        }),
+        (t.loadDwf4Statsistiek = function (r, i, o) {
+          if ("NAChange" == r || t.loadOffiDone) {
+            if ("KLIK" == r && !e.chkIfAuthorized4Match(!0)) {
+              var u = n.getRelguid(),
+                s = !1;
+              angular.forEach(t.Offs, function (e) {
+                e.RelGUID == u && (s = !0);
+              }),
+                s && (e.authorized4Match = !0);
+            }
+            if ("NAChange" != r) {
+              if (t.loadVgngDone) return;
+              if (!t.loadDeelDone) return void t.loadDwfDeelMetXHR("GET4STAT");
+              if (!e.authorized4Match && !e.verslagIsPublic) return;
+            }
+            try {
+              var l,
+                d = new XMLHttpRequest();
+              d.addEventListener("readystatechange", function () {
+                if (4 === this.readyState) {
+                  d.response;
+                  if (200 == this.status) {
+                    t.ResponseText = this.responseText;
+                    var e = JSON.parse(this.responseText);
+                    ("GET" != r && "GET4STAT" != r && "KLIK" != r) ||
+                      (t.VgngAr = e.GebNis),
+                      t.FillArrays4Statestiek(),
+                      (t.loadVgngDone = !0),
+                      t.$apply();
+                  } else
+                    0 == this.status
+                      ? a.wqAlert("Verbinding met server niet mogelijk!")
+                      : a.wqAlert(
+                          "Username onbekend en/of wachtwoord onjuist!"
+                        );
+                }
+              });
+              var f = t.sportModuleBaseUrl + "/DwfVgngByWedGuid";
+              d.open("PUT", f, !0),
+                d.setRequestHeader("authorization", n.getAutheader()),
+                d.setRequestHeader(
+                  "Content-type",
+                  "application/json; charset=utf-8"
+                );
+              var g = {};
+              ("GET" != r && "GET4STAT" != r && "KLIK" != r) ||
+                (g = {
+                  AuthHeader: n.getAutheader(),
+                  WQVer: t.currentversion,
+                  WedGUID: t.guid,
+                  CRUD: "R",
+                }),
+                "NAChange" == r &&
+                  (g = {
+                    AuthHeader: n.getAutheader(),
+                    WQVer: t.currentversion,
+                    WedGUID: t.guid,
+                    Uitslag: t.matchUitslag,
+                    CRUD: "U",
+                    TU: e.TUO,
+                    RelNr: i,
+                    RelGUID: o,
+                  }),
+                (l = JSON.stringify(g)),
+                d.send(l);
+            } catch (e) {}
+          } else t.loadDwfOffiMetXHR("KLIK");
+        }),
+        (t.FillArrays4Statestiek = function () {
+          (t.tPunten = 0), (t.uPunten = 0), (t.tInfo = []), (t.uInfo = []);
+          var r = 0;
+          if (
+            (angular.forEach(t.VgngAr, function (e) {
+              40 == e.GebType && e.Periode > r && (r = e.Periode);
+            }),
+            angular.forEach(t.Tthuis, function (e) {
+              (e.sFouten = new Array()),
+                (e.iScore = 0),
+                (e.Rol1e5 = "Y" == e.Rol1e5 ? "1e5" : ""),
+                (e.lUitsluiting = !1),
+                (e.PeriodeOpVeld = new Array(r)),
+                angular.forEach(e.PeriodeOpVeld, function (e) {
+                  ("");
+                });
+            }),
+            angular.forEach(t.Tuit, function (e) {
+              (e.sFouten = new Array()),
+                (e.iScore = 0),
+                (e.Rol1e5 = "Y" == e.Rol1e5 ? "1e5" : ""),
+                (e.lUitsluiting = !1),
+                (e.PeriodeOpVeld = new Array(r)),
+                (e.PeriodeOpVeld = new Array(r)),
+                angular.forEach(e.PeriodeOpVeld, function (e) {
+                  ("");
+                });
+            }),
+            angular.forEach(t.VgngAr, function (e) {
+              t.UitvoerenGebNis(e);
+            }),
+            angular.forEach(t.Tthuis, function (e) {
+              s(e);
+            }),
+            angular.forEach(t.Tuit, function (e) {
+              s(e);
+            }),
+            (t.tTotaalRegel = {
+              Periode: "Totaal",
+              TO: 0,
+              Fouten: 0,
+              Score: 0,
+            }),
+            (t.uTotaalRegel = {
+              Periode: "Totaal",
+              TO: 0,
+              Fouten: 0,
+              Score: 0,
+            }),
+            angular.forEach(t.tInfo, function (e) {
+              (t.tTotaalRegel.TO += e.TO),
+                (t.tTotaalRegel.Fouten += e.Fouten),
+                (t.tTotaalRegel.Score += e.Score);
+            }),
+            angular.forEach(t.uInfo, function (e) {
+              (t.uTotaalRegel.TO += e.TO),
+                (t.uTotaalRegel.Fouten += e.Fouten),
+                (t.uTotaalRegel.Score += e.Score);
+            }),
+            "U10" == e.dwfPdf &&
+              ((t.tTotaalRegel.Score = 0),
+              (t.uTotaalRegel.Score = 0),
+              8 == t.tInfo.length))
+          )
+            for (var n = 0; n < 8; ) {
+              var a = t.tInfo[n].Score + t.tInfo[n + 1].Score,
+                i = t.uInfo[n].Score + t.uInfo[n + 1].Score;
+              a == i
+                ? ((t.tTotaalRegel.Score += 2), (t.uTotaalRegel.Score += 2))
+                : a > i
+                ? ((t.tTotaalRegel.Score += 3), (t.uTotaalRegel.Score += 1))
+                : ((t.tTotaalRegel.Score += 1), (t.uTotaalRegel.Score += 3)),
+                (n += 2);
+            }
+          t.tInfo.push(t.tTotaalRegel), t.uInfo.push(t.uTotaalRegel);
+        }),
+        (t.GetTafelLijst = function (r) {
+          t.loadTafelNeeded &&
+            (function r(i) {
+              if (("GET" != i && "GETUIT" != i) || t.loadTafelNeeded)
+                try {
+                  var o,
+                    s = new XMLHttpRequest();
+                  s.addEventListener("readystatechange", function () {
+                    4 === this.readyState &&
+                      (s.response,
+                      200 == this.status
+                        ? ((t.ResponseText = this.responseText),
+                          (t.data = JSON.parse(this.responseText)),
+                          "GET" == i
+                            ? ((u = t.data.TafelLijst),
+                              (t.leden = u),
+                              r("GETUIT"))
+                            : ((u = u.concat(t.data.TafelLijst)),
+                              (t.leden = u),
+                              (t.loadTafelNeeded = !1),
+                              t.$apply()))
+                        : 0 == this.status &&
+                          a.wqAlert("Verbinding met server niet mogelijk!"));
+                  });
+                  var l = t.sportModuleBaseUrl + "/TeamTafelByTeamGuid";
+                  s.open("PUT", l, !0),
+                    s.setRequestHeader("authorization", n.getAutheader()),
+                    s.setRequestHeader(
+                      "Content-type",
+                      "application/json; charset=utf-8"
+                    );
+                  var d = {
+                    Naam: "tGAndre",
+                    WQVer: "na" + t.currentversion,
+                    GUID: "Gandre1",
+                    TsetExtra: "test",
+                  };
+                  "GET" == i &&
+                    (d = {
+                      AuthHeader: n.getAutheader(),
+                      WQVer: t.currentversion,
+                      WedGUID: t.guid,
+                      TeamGUID: e.teamThuisGUID,
+                      CRUD: "R",
+                    }),
+                    "GETUIT" == i &&
+                      (d = {
+                        AuthHeader: n.getAutheader(),
+                        WQVer: t.currentversion,
+                        WedGUID: t.guid,
+                        TeamGUID: e.teamUitGUID,
+                        CRUD: "R",
+                      }),
+                    (o = JSON.stringify(d)),
+                    s.send(o);
+                } catch (e) {}
+            })("GET");
+        }),
+        (t.UitvoerenGebNis = function (e) {
+          if (10 == e.GebStatus) {
+            var r = e.Periode;
+            if (99 != r) {
+              if (
+                (t.tInfo.length < r &&
+                  t.tInfo.push({ Periode: r, TO: 0, Fouten: 0, Score: 0 }),
+                t.uInfo.length < r &&
+                  t.uInfo.push({ Periode: r, TO: 0, Fouten: 0, Score: 0 }),
+                20 == e.GebType && 2 == e.Text.length)
+              )
+                return (
+                  "T" == e.TofU && t.tInfo[r - 1].TO++,
+                  void ("U" == e.TofU && t.uInfo[r - 1].TO++)
+                );
+              var n = t.curSpeler;
+              if (
+                null !=
+                (n = ("T" == e.TofU ? t.Tthuis : t.Tuit).filter(function (t) {
+                  return (
+                    t.RelGUID == e.RelGUID &&
+                    (t.RugNr == e.RugNr ||
+                      ("C" == t.RugNr && "HC" == e.RugNr) ||
+                      ("A" == t.RugNr && "AC" == e.RugNr))
+                  );
+                })[0])
+              ) {
+                if (10 == e.GebType) {
+                  var a = parseInt(e.Text, 10);
+                  return (
+                    (n.iScore += a),
+                    "T" == e.TofU &&
+                      ((t.tPunten += a), (t.tInfo[r - 1].Score += a)),
+                    "U" == e.TofU &&
+                      ((t.uPunten += a), (t.uInfo[r - 1].Score += a)),
+                    void (e.Text =
+                      e.Text.substring(0, 1) +
+                      " (" +
+                      t.tPunten +
+                      "-" +
+                      t.uPunten +
+                      ")")
+                  );
+                }
+                if (30 == e.GebType) {
+                  var i = e.Text,
+                    o = !0;
+                  ("D" != e.Text && "F" != e.Text) || (o = !1),
+                    "T" == e.TofU &&
+                      (n.sFouten.push(i), o && t.tInfo[r - 1].Fouten++),
+                    "U" == e.TofU &&
+                      (n.sFouten.push(i), o && t.uInfo[r - 1].Fouten++);
+                }
+                50 == e.GebType &&
+                  "in" == e.Text &&
+                  (n.PeriodeOpVeld[e.Periode - 1] = "x");
+              }
+            }
+          }
+        }),
+        (t.loadDwfOffiMetXHR = function (r) {
+          if ("GET" != r || !t.loadOffiDone)
+            try {
+              var i,
+                o = new XMLHttpRequest();
+              o.addEventListener("readystatechange", function () {
+                if (4 === this.readyState) {
+                  o.response;
+                  200 == this.status
+                    ? ((t.ResponseText = this.responseText),
+                      (t.data = JSON.parse(this.responseText)),
+                      (t.Offs = t.data.Offs),
+                      angular.forEach(t.Offs, function (e) {
+                        "1e" === e.Functie &&
+                          ((e.icon = "../image/sprite.svg#icon-off-1"),
+                          (e.text = "1")),
+                          "2e" === e.Functie &&
+                            ((e.icon = "../image/sprite.svg#icon-off-2"),
+                            (e.text = "2")),
+                          "3e" === e.Functie &&
+                            ((e.icon = "../image/sprite.svg#icon-off-3"),
+                            (e.text = "3")),
+                          "Score" === e.Functie &&
+                            ((e.icon = "../image/sprite.svg#icon-off-score"),
+                            (e.text = "Score")),
+                          "Time" === e.Functie &&
+                            ((e.icon = " ../image/sprite.svg#icon-off-time"),
+                            (e.text = "Time")),
+                          "24sec" === e.Functie &&
+                            ((e.icon = "../image/sprite.svg#icon-off-24s"),
+                            (e.text = "24S")),
+                          "Comm" === e.Functie &&
+                            ((e.icon = "../image/sprite.svg#icon-off-comm"),
+                            (e.text = "COM"));
+                      }),
+                      (t.loadOffiDone = !0),
+                      ("GET4STAT" != r && "KLIK" != r) ||
+                        t.loadDwf4Statsistiek("KLIK"),
+                      (t.tt = ""),
+                      t.$apply())
+                    : 400 == this.status &&
+                      -1 !== this.responseText.indexOf("Geen SBO Official")
+                    ? a.wqAlert("Geen SBO official. Inloggen niet mogelijk!")
+                    : 0 == this.status
+                    ? a.wqAlert("Verbinding met server niet mogelijk!")
+                    : a.wqAlert("Username onbekend en/of wachtwoord onjuist!");
+                }
+              });
+              var u = t.sportModuleBaseUrl + "/DwfOffiByWedGuid";
+              o.open("PUT", u, !0),
+                o.setRequestHeader("authorization", n.getAutheader()),
+                o.setRequestHeader(
+                  "Content-type",
+                  "application/json; charset=utf-8"
+                );
+              var s = {
+                Naam: "tGAndre",
+                WQVer: "na" + t.currentversion,
+                GUID: "Gandre1",
+                TsetExtra: "test",
+              };
+              ("GET" != r && "GET4STAT" != r && "KLIK" != r) ||
+                (s = {
+                  AuthHeader: n.getAutheader(),
+                  WQVer: t.currentversion,
+                  WedGUID: t.guid,
+                  CRUD: "R",
+                });
+              var l = "";
+              null == e.CurrReiskosten ||
+                "" == e.CurrReiskosten ||
+                isNaN(e.CurrReiskosten) ||
+                (l = e.CurrReiskosten.toFixed(2));
+              var d = "";
+              null == e.CurrVergoeding ||
+                "" == e.CurrVergoeding ||
+                isNaN(e.CurrVergoeding) ||
+                (d = e.CurrVergoeding.toFixed(2)),
+                ("ADD" != r && "MOD" != r) ||
+                  (s = {
+                    AuthHeader: n.getAutheader(),
+                    WQVer: t.currentversion,
+                    WedGUID: t.guid,
+                    Uitslag: t.matchUitslag,
+                    Functie: e.CurrFunctie,
+                    TU: e.TUO,
+                    CRUD: "U",
+                    RelGUID: e.CurrRelGUID,
+                    RelNr: e.CurrRelNr,
+                    Naam: e.CurrNaam,
+                    GebDat: e.CurrGebDat,
+                    Reiskosten: l,
+                    Vergoeding: d,
+                  }),
+                (i = JSON.stringify(s)),
+                o.send(i);
+            } catch (e) {}
+        }),
+        (t.wijzHandSpeler = function (r, n) {
+          if (
+            ("init" == r && t.MainFormModal(e.TUO, "AddSpelerNA"),
+            "wijzig" == r)
+          ) {
+            var a = e.CurrRelGUID,
+              i = n.relGuid;
+            (e.CurrRelGUID += ";" + n.relGuid),
+              (e.CurrRelNr = n.lidNr),
+              (e.CurrNaam = n.volledigeNaam);
+            var o = n.cat;
+            "G" == n.cat.substring(0, 1) &&
+              (o = ("M" == n.mvo ? "J" : "M") + o.substring(1, 3)),
+              (e.CurrGebDat = n.gebdat + " (" + o + ")"),
+              (e.CurrMA = "-" != n.maOrg ? "Ja" : "-"),
+              (e.CurrTGuidNivo = c(n)),
+              t.loadDwfDeelMetXHR("MOD"),
+              t.loadDwf4Statsistiek("NAChange", a, i),
+              $("#MainForm").modal("hide");
+          }
+        }),
+        (t.MainFormModal = function (r, s, d) {
+          if (
+            ("AddSpelerNA" == s
+              ? ((t.NaOmnummer = !0), (s = "AddSpeler"))
+              : (t.NaOmnummer = !1),
+            e.chkIfAuthorized4Match())
+          ) {
+            if ("Y" != t.dwfStatus) {
+              if (
+                (e.dwfVerslagMember ||
+                  a.wqAlert(
+                    "Wedstrijd is nog niet beschikbaar of is reeds gespeeld!"
+                  ),
+                !e.dwfVerslagMember)
+              )
+                return;
+              var g = n.getRelguid();
+              if ("BVBL57508" != g && "BVBL185889" != g && "BVBL183253" != g)
+                return;
+            }
+            if ("List" == r);
+            else e.TUO = r;
+            if (
+              ((e.AddSpelerModalContent = !1),
+              (e.ModiSpelerModalContent = !1),
+              (e.DeleteSpelerModalContent = !1),
+              (e.AddBegeleiderModalContent = !1),
+              (e.ModiBegeleiderModalContent = !1),
+              (e.ResetBasisSpelersModalContent = !1),
+              (e.DeleteBegeleiderModalContent = !1),
+              (e.ModiDeleteSpelerModalContent = !1),
+              (e.AddOfficialModelContent = !1),
+              (e.DeleteOfficialModalContent = !1),
+              (e.ModiOfficialModelContent = !1),
+              (e.SupportModelContent = !1),
+              (t.relnotfound = !1),
+              (t.ToggleDisabled = !1),
+              (e.query = ""),
+              (t.requierd = !0),
+              "AddSpeler" === s &&
+                (f(t.TUO),
+                "T" == e.TUO && (t.leden = i.S),
+                "U" == e.TUO && (t.leden = o.S),
+                (e.AddSpelerModalContent = !0)),
+              "ModiSpeler" === s)
+            ) {
+              if (((e.CurrentRelObject = d), "List" == r)) {
+                (e.CurrRelNr = d.lidNr),
+                  (e.CurrRelGUID = d.relGuid),
+                  (e.CurrNaam = d.volledigeNaam);
+                var p = d.cat;
+                "G" == d.cat.substring(0, 1) &&
+                  (p = ("M" == d.mvo ? "J" : "M") + p.substring(1, 3)),
+                  (e.CurrGebDat = d.gebdat + " (" + p + ")"),
+                  (e.CurrMA = "-" != d.maOrg ? "Ja" : "-"),
+                  (e.CurrTGuidNivo = c(d)),
+                  (e.CurrRugNum = ""),
+                  (e.CurrAanvChk = !1),
+                  (e.Curr1eVijf = !1),
+                  (e.CurrFunctie = "S"),
+                  (e.CurrChecked = !1),
+                  (e.CurrOpmerking = ""),
+                  (e.CurrFouten = "");
+              } else l(d);
+              (e.ModiSpelerModalContent = !0),
+                (e.ExtraVoorHandmatig = !1),
+                e.dwfVerslagMember &&
+                  e.CurrRelGUID.indexOf("NA_") > -1 &&
+                  (e.ExtraVoorHandmatig = !0),
+                T(),
+                (e.CurrFouten = ""),
+                e.InfoSpelerMetMelding &&
+                  (e.CurrFouten = e.TeltAlsInvaller ? "Max 2" : "I");
+            }
+            if (
+              ("RemSpeler" === s && (l(d), (e.DeleteSpelerModalContent = !0)),
+              "AddBegeleider" === s &&
+                (f(t.TUO, "TV"),
+                (e.CurrFunctie = d.Functie),
+                "T" == e.TUO && (t.leden = i[e.CurrFunctie]),
+                "U" == e.TUO && (t.leden = o[e.CurrFunctie]),
+                (e.AddBegeleiderModalContent = !0)),
+              "ModiBegeleider" === s &&
+                ((e.CurrentRelObject = d),
+                "List" == r
+                  ? ((e.CurrRelNr = d.lidNr),
+                    (e.CurrRelGUID = d.relGuid),
+                    (e.CurrNaam = d.volledigeNaam),
+                    (e.CurrGebDat = d.gebdat),
+                    (e.CurrRugNum = ""),
+                    (e.CurrAanvChk = !1),
+                    (e.Curr1eVijf = !1),
+                    (e.CurrChecked = !1),
+                    (e.CurrOpmerking = ""),
+                    (e.CurrFouten = ""))
+                  : l(d),
+                (e.ModiBegeleiderModalContent = !0)),
+              "DeleteBegeleider" === s &&
+                (l(d), (e.DeleteBegeleiderModalContent = !0)),
+              "resetSpelers" === s)
+            ) {
+              if (null === e.userRelGuid || "na" === e.userRelGuid) return;
+              if ("" != t.matchUitslag)
+                return void a.wqAlert(
+                  "Wedstrijd heeft reeds uitslag reset niet mogelijk!"
+                );
+              (e.CurrNaam = ""), (e.ResetBasisSpelersModalContent = !0);
+            }
+            if ("AddOffinfo" === s) {
+              (e.CurrFunctie = d.Functie),
+                (t.relNr = void 0),
+                (t.meldingNietGevonden = "");
+              var m =
+                  "1e" == e.CurrFunctie ||
+                  "2e" == e.CurrFunctie ||
+                  "3e" == e.CurrFunctie,
+                h = !m;
+              m && (f("O"), (t.leden = i.All)),
+                h && (t.GetTafelLijst("O"), (t.leden = u)),
+                (e.AddOfficialModelContent = !0);
+            }
+            "modiOfficialinfo" === s &&
+              ("List" == r
+                ? ((e.CurrRelNr = d.lidNr),
+                  (e.CurrRelGUID = d.relGuid),
+                  (e.CurrNaam =
+                    null != d.volledigeNaam ? d.volledigeNaam : d.Naam),
+                  (e.CurrGebDat = null != d.gebdat ? d.gebdat : d.sGebDat),
+                  (e.CurrReiskosten = ""),
+                  (e.CurrVergoeding = ""))
+                : l(d),
+              (e.ModiOfficialModelContent = !0)),
+              "DeleteOfficial" === s &&
+                ((e.CurrFunctie = d.Functie),
+                (e.DeleteOfficialModalContent = !0)),
+              "support" === s &&
+                ((e.SupportModelContent = !0), (t.supportCase = d)),
+              $("#MainForm").modal("show");
+          }
+        }),
+        (t.manageSpelers = function (r) {
+          if ("ZoekOffByRelNr" == r)
+            return (
+              (t.relnotfound = !1), void t.check4RelNrMetXHR("GET", t.relNr)
+            );
+          if ("modiSpeler" == r)
+            return (
+              $("#MainForm").modal("hide"), void t.loadDwfDeelMetXHR("MOD")
+            );
+          if ("RemSpeler" == r)
+            return (
+              $("#MainForm").modal("hide"), void t.loadDwfDeelMetXHR("REM")
+            );
+          if ("modiBegeleider" == r)
+            return (
+              $("#MainForm").modal("hide"), void t.loadDwfDeelMetXHR("MOD")
+            );
+          if ("RemBegeleider" == r)
+            return (
+              $("#MainForm").modal("hide"),
+              (e.CurrRelGUID = ""),
+              (e.CurrGebDat = ""),
+              (e.CurrNaam = ""),
+              void t.loadDwfDeelMetXHR("MOD")
+            );
+          if ("modiOfficial" == r)
+            return (
+              t.loadDwfOffiMetXHR("MOD"), void $("#MainForm").modal("hide")
+            );
+          if ("RemOfficial" == r)
+            return (
+              $("#MainForm").modal("hide"),
+              (e.CurrRelGUID = ""),
+              (e.CurrReiskosten = ""),
+              (e.CurrVergoeding = ""),
+              (e.CurrNaam = ""),
+              void t.loadDwfOffiMetXHR("MOD")
+            );
+          if ("support" == r) {
+            $("#MainForm").modal("hide");
+          }
+        }),
+        (t.check4RelNrMetXHR = function (e, r) {
+          try {
+            var i,
+              o = new XMLHttpRequest();
+            o.addEventListener("readystatechange", function () {
+              if (4 === this.readyState) {
+                o.response;
+                if (200 == this.status) {
+                  t.ResponseText = this.responseText;
+                  var r = JSON.parse(this.responseText);
+                  if (null == r || "undefined" == r)
+                    return (
+                      (t.meldingNietGevonden = "Lidnummer niet gevonden!"),
+                      (t.relnotfound = !0),
+                      void t.$apply()
+                    );
+                  if ("GET" == e && null != r) {
+                    if (null != r.relGuid) {
+                      var n = {
+                        relGuid: r.relGuid,
+                        relNr: r.LidNr,
+                        gebdat: r.sGebDat,
+                        volledigeNaam: r.Naam,
+                      };
+                      t.MainFormModal("List", "modiOfficialinfo", n);
+                    }
+                  } else $("#MainForm").modal("hide");
+                  (t.tt = ""), t.$apply();
+                } else
+                  400 == this.status &&
+                  -1 !== this.responseText.indexOf("Geen SBO Official")
+                    ? a.wqAlert("Geen SBO official. Inloggen niet mogelijk!")
+                    : 0 == this.status
+                    ? a.wqAlert("Verbinding met server niet mogelijk!")
+                    : a.wqAlert("Username onbekend en/of wachtwoord onjuist!");
+              }
+            });
+            var u = t.sportModuleBaseUrl + "/RelByRelNr";
+            o.open("PUT", u, !0),
+              o.setRequestHeader("authorization", n.getAutheader()),
+              o.setRequestHeader(
+                "Content-type",
+                "application/json; charset=utf-8"
+              );
+            var s = {
+              Naam: "tGAndre",
+              WQVer: "na" + t.currentversion,
+              GUID: "Gandre1",
+              TsetExtra: "test",
+            };
+            "GET" == e &&
+              (s = {
+                AuthHeader: n.getAutheader(),
+                WQVer: t.currentversion,
+                WedGUID: t.guid,
+                CRUD: "R",
+                relNr: r,
+                RelGUID: "VISUwed",
+              }),
+              (i = JSON.stringify(s)),
+              o.send(i);
+          } catch (e) {}
+        }),
+        (t.makePdf = function () {
+          if (e.authorized4Match) {
+            sessionStorage.setItem("pouleNaam", e.pouleNaam),
+              sessionStorage.setItem("wedID", e.wedID),
+              sessionStorage.setItem("datumString", t.datumString),
+              sessionStorage.setItem(
+                "sportModuleClubLogoUrlPrefix",
+                e.sportModuleClubLogoUrlPrefix
+              ),
+              sessionStorage.setItem("clubThuisGUID", e.clubThuisGUID),
+              sessionStorage.setItem("teamThuisNaam", e.teamThuisNaam),
+              sessionStorage.setItem(
+                "tTotaalRegel",
+                JSON.stringify(t.tTotaalRegel)
+              ),
+              sessionStorage.setItem("tInfo", JSON.stringify(t.tInfo)),
+              sessionStorage.setItem("Tthuis", JSON.stringify(t.Tthuis)),
+              sessionStorage.setItem("clubUitGUID", e.clubUitGUID),
+              sessionStorage.setItem("teamUitNaam", e.teamUitNaam),
+              sessionStorage.setItem(
+                "uTotaalRegel",
+                JSON.stringify(t.uTotaalRegel)
+              ),
+              sessionStorage.setItem("uInfo", JSON.stringify(t.uInfo)),
+              sessionStorage.setItem("Tuit", JSON.stringify(t.Tuit)),
+              sessionStorage.setItem("VgngAr", JSON.stringify(t.VgngAr)),
+              sessionStorage.setItem("Offs", JSON.stringify(t.Offs)),
+              sessionStorage.setItem("dwfVerslagMember", e.dwfVerslagMember),
+              sessionStorage.setItem("dwfPdf", e.dwfPdf),
+              sessionStorage.setItem("dwfInfo", e.dwfInfo),
+              (e.OpmerkTeamThuis = "");
+            var r = 0;
+            (e.TUO = "T"),
+              angular.forEach(t.Tthuis, function (t) {
+                if ("S" == t.Functie) {
+                  var n = !1;
+                  -1 != t.RelGUID.indexOf("NA") &&
+                    ((e.OpmerkTeamThuis += "Handmatig toegevoegd:\n"),
+                    (e.OpmerkTeamThuis += t.Naam + "\n"),
+                    (e.OpmerkTeamThuis += "Relnr:" + t.RelNr + "\n"),
+                    (e.OpmerkTeamThuis += "Geboortedatum:" + t.GebDat + "\n"),
+                    (n = !0)),
+                    null != t.Opmerking &&
+                      "" != t.Opmerking &&
+                      (n || ((e.OpmerkTeamThuis += t.Naam + "\n"), (n = !0)),
+                      (e.OpmerkTeamThuis += "Opmerking:" + t.Opmerking + "\n")),
+                    l(t),
+                    T(),
+                    e.InfoSpelerMetMelding &&
+                      (e.TeltAlsInvaller && r++,
+                      n || (e.OpmerkTeamThuis += t.Naam + "\n"),
+                      (e.OpmerkTeamThuis += e.currInfoSpelerOnjuist));
+                }
+              }),
+              r > 2 &&
+                (e.OpmerkTeamThuis +=
+                  "Maximaal aantal invallers overschreden!\n"),
+              (e.OpmerkTeamUit = "");
+            var n = 0;
+            (e.TUO = "U"),
+              angular.forEach(t.Tuit, function (t) {
+                if ("S" == t.Functie) {
+                  var r = !1;
+                  -1 != t.RelGUID.indexOf("NA") &&
+                    ((e.OpmerkTeamUit += "Handmatig toegevoegd:\n"),
+                    (e.OpmerkTeamUit += t.Naam + "\n"),
+                    (e.OpmerkTeamUit += "Relnr:" + t.RelNr + "\n"),
+                    (e.OpmerkTeamUit += "Geboortedatum:" + t.GebDat + "\n"),
+                    (r = !0)),
+                    null != t.Opmerking &&
+                      "" != t.Opmerking &&
+                      (r || ((e.OpmerkTeamUit += t.Naam + "\n"), (r = !0)),
+                      (e.OpmerkTeamUit += "Opmerking:" + t.Opmerking + "\n")),
+                    l(t),
+                    T(),
+                    e.InfoSpelerMetMelding &&
+                      (e.TeltAlsInvaller && n++,
+                      r || (e.OpmerkTeamUit += t.Naam + "\n"),
+                      (e.OpmerkTeamUit += e.currInfoSpelerOnjuist));
+                }
+              }),
+              n > 2 &&
+                (e.OpmerkTeamUit +=
+                  "Maximaal aantal invallers overschreden!\n"),
+              sessionStorage.setItem("OpmerkTeamThuis", e.OpmerkTeamThuis),
+              sessionStorage.setItem("OpmerkTeamUit", e.OpmerkTeamUit),
+              window.open("Matchdetailpdf", "_blank");
+          } else
+            a.wqAlert(
+              "Inloggen vereist! Verslag alleen beschikbaar als je aangesloten bent bij club thuis en/of bezoekers!"
+            );
+        }),
+        (t.supportInfo = function (e) {
+          if (("GET" == e && t.loadDwfSupportMetXHR("GET"), "SET" == e)) {
+            a.wqAlert("Voer nu deze file door naar CB");
+            t.supportCase.Content;
+            (t.showSupportInfo = !1),
+              t.loadDwfSupportMetXHR("SET"),
+              $("#MainForm").modal("hide");
+          }
+        }),
+        (t.toggleBtn = function () {
+          t.showSupportInfo = !1;
+        }),
+        (t.loadDwfSupportMetXHR = function (e) {
+          try {
+            var r,
+              i = new XMLHttpRequest();
+            i.addEventListener("readystatechange", function () {
+              if (4 === this.readyState) {
+                i.response;
+                200 == this.status
+                  ? ("SET" == e
+                      ? ((t.loadVgngDone = !1), t.loadDwf4Statsistiek("KLIK"))
+                      : ((t.ResponseText = this.responseText),
+                        (t.dwfSupportAr = JSON.parse(this.responseText)),
+                        (t.showSupportInfo = !0)),
+                    t.$apply())
+                  : 0 == this.status
+                  ? a.wqAlert("Verbinding met server niet mogelijk!")
+                  : a.wqAlert("Username onbekend en/of wachtwoord onjuist!");
+              }
+            });
+            var o = t.sportModuleBaseUrl + "/DwfSupportFailInfoByWedGuid";
+            i.open("PUT", o, !0),
+              i.setRequestHeader("authorization", n.getAutheader()),
+              i.setRequestHeader(
+                "Content-type",
+                "application/json; charset=utf-8"
+              );
+            var u = {
+              Naam: "tGAndre",
+              WQVer: "na" + t.currentversion,
+              GUID: "Gandre1",
+              TsetExtra: "test",
+            };
+            "GET" == e &&
+              (u = {
+                AuthHeader: n.getAutheader(),
+                WQVer: t.currentversion,
+                WedGUID: t.guid,
+                CRUD: "R",
+              }),
+              "SET" == e &&
+                (u = {
+                  AuthHeader: n.getAutheader(),
+                  WQVer: t.currentversion,
+                  WedGUID: t.guid,
+                  CRUD: "U",
+                  Naam: t.supportCase.fullName,
+                  RelNr: t.supportCase.dwfFileType,
+                }),
+              (r = JSON.stringify(u)),
+              i.send(r);
+          } catch (e) {}
+        });
+    },
+  ]);
