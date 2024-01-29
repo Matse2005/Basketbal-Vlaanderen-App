@@ -1,5 +1,9 @@
 [
   {
+    "title": "Wedstrijden scherm",
+    "description": "Het wedstrijden scherm heeft nog heel wat problemen, er te snel door scrollen zorgt ervoor dat deze gek begint te doen en daardoor de app niet meer werkt. Op deze moment is het nog aangeraden om niet teveel teams, clubs en competities aan je favoriete toe tevoegen om problemen te voorkomen."
+  },
+  {
     "title": "Favoriete updates",
     "description": "Wanneer je een club, team of competitie toegevoegd hebt of verwijderd hebt uit je favoriete wordt de data niet geupdate. Je moet de app opnieuw opstarten na elke verandering"
   },
