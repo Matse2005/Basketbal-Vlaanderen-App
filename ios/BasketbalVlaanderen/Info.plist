@@ -27,6 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>bbvl</string>
           <string>be.matsevh.basketbal.vlaanderen</string>
         </array>
       </dict>

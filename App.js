@@ -17,6 +17,8 @@ import ClubScreen from "./src/screens/Club";
 import TeamScreen from "./src/screens/Team";
 import BugsScreen from "./src/screens/Bugs";
 
+// SplashScree.preventAutoHideAsync();
+
 const Tab = createBottomTabNavigator();
 
 function Home() {

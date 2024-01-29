@@ -37,3 +37,6 @@ yarn-error.*
 
 # apk
 *.apk
+
+# aab
+*.aab

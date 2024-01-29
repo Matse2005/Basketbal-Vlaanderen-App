@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/app/icon.png",
     "userInterfaceStyle": "light",
+    "scheme": "bbvl",
     "splash": {
       "image": "./assets/app/splash.png",
       "resizeMode": "contain",
@@ -40,9 +41,6 @@
     },
     "updates": {
       "url": "https://u.expo.dev/9c2d5474-3e15-46be-981c-43c0d2fa9f40"
-    },
-    "expo": {
-      "scheme": "bbvl"
     }
   }
 }

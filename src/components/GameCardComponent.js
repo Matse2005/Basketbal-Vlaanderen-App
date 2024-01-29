@@ -1,7 +1,8 @@
 // import "react-native-gesture-handler";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Linking, Text, View } from "react-native";
-import { Icon, Image } from "react-native-elements";
+import { Icon } from "react-native-elements";
+import { Image } from "expo-image";
 import FastImage from "react-native-fast-image";
 
 function GameCardComponent({ game }) {
@@ -20,8 +21,9 @@ function GameCardComponent({ game }) {
               // cache: "default",
               // priority: FastImage.priority.normal,
             }}
-            decode="async"
-            resizeMode="contain"
+            // decode="async"
+            cachePolicy="disk"
+            contentFit="contain"
             // resizeMode={FastImage.resizeMode.contain}
             className=" w-11 h-11"
           />
@@ -75,8 +77,9 @@ function GameCardComponent({ game }) {
                 ".jpg",
               cache: "default",
             }}
-            decode="async"
-            resizeMode="contain"
+            // decode="async"
+            contentFit="contain"
+            cachePolicy="disk"
             className=" w-11 h-11"
           />
           <Text className=" text-[10px] text-center">{game.uit.naam}</Text>

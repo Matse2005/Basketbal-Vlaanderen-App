@@ -20,132 +20,15 @@ const Tab = createMaterialTopTabNavigator();
 function GamesByDateScreen({ route, navigation }) {
   const [refreshing, setRefreshing] = React.useState(false);
   const [isLoading, setLoading] = useState(true);
-  // const { matches } = route.params;
-  // console.log(matches);
   const [matches, setMatches] = useState(route.params.matches);
   const { date } = route.params;
 
-  // const clubMatches = async (guid) => {
-  //   const response = await fetch(
-  //     "https://vblCB.wisseq.eu/VBLCB_WebService/data/OrgMatchesByGuid?issguid=" +
-  //       guid
-  //   );
-  //   const matches = await response.json();
-  //   return matches;
-  // };
-
-  // const teamMatches = async (guid) => {
-  //   const response = await fetch(
-  //     "https://vblCB.wisseq.eu/VBLCB_WebService/data/TeamMatchesByGuid?teamGuid=" +
-  //       guid
-  //   );
-  //   const matches = await response.json();
-  //   return matches;
-  // };
-
-  // const pouleMatches = async (guid) => {
-  //   const response = await fetch(
-  //     "https://vblCB.wisseq.eu/VBLCB_WebService/data/PouleMatchesByGuid?issguid=" +
-  //       guid
-  //   );
-  //   const matches = await response.json();
-  //   return matches;
-  // };
-
-  // const retrieveMatches = async (favorites) => {
-  //   var matches = [];
-
-  //   await Promise.all(
-  //     favorites.map(async (favorite) => {
-  //       const [type, guid] = favorite.split("_");
-
-  //       switch (type) {
-  //         case "club":
-  //           matches = [...matches, ...(await clubMatches(guid))];
-  //           break;
-  //         case "team":
-  //           matches = [...matches, ...(await teamMatches(guid))];
-  //           break;
-  //         case "poule":
-  //           matches = [...matches, ...(await pouleMatches(guid))];
-  //           break;
-  //       }
-  //     })
-  //   );
-
-  //   return matches;
-  // };
-
-  // const removeDuplicateMatches = (matches) => {
-  //   matches.filter(function (match, pos) {
-  //     return matches.indexOf(match) == pos;
-  //   });
-
-  //   return matches;
-  // };
-
-  // const sortMatches = (matches) => {
-  //   function compareDateTime(a, b) {
-  //     const dateA = new Date(
-  //       `${a.datumString.split("-").reverse().join("-")} ${
-  //         a.beginTijd !== "" ? a.beginTijd.replace(".", ":") : "00:00"
-  //       }`
-  //     );
-  //     const dateB = new Date(
-  //       `${b.datumString.split("-").reverse().join("-")} ${
-  //         b.beginTijd !== "" ? b.beginTijd.replace(".", ":") : "00:00"
-  //       }`
-  //     );
-
-  //     return dateA - dateB;
-  //   }
-
-  //   matches.sort(compareDateTime);
-
-  //   return matches;
-  // };
-
-  // const filterOnDate = (matches) => {
-  //   const filtered = matches.filter(
-  //     (match) =>
-  //       new Date(match.datumString.split("-").reverse().join("-")).toString() ==
-  //       new Date(date.split("-").reverse().join("-")).toString()
-  //   );
-
-  //   return filtered;
-  // };
-
-  // const getMatches = async (startdate) => {
-  //   try {
-  //     await retrieveMatches(await getFavorites()).then((matches) => {
-  //       const uniqueMatches = removeDuplicateMatches(matches);
-  //       const sortedMatches = sortMatches(uniqueMatches);
-  //       const filteredMatches = filterOnDate(sortedMatches);
-
-  //       setMatches(filteredMatches);
-  //     });
-  //   } catch (error) {
-  //     console.error(error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     console.log(matches);
-  //     setLoading(false);
-  //   }, [])
-  // );
-
   useEffect(() => {
-    // console.log(matches);
     setLoading(false);
   });
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    // getMatches();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -171,7 +54,7 @@ function GamesByDateScreen({ route, navigation }) {
             className="mt-2"
             data={matches}
             showsVerticalScrollIndicator={false}
-            keyExtractor={({ wedID }) => wedID}
+            keyExtractor={(match, index) => match.wedID + index}
             ListEmptyComponent={<NoDataComponent />}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -203,14 +86,17 @@ function GamesScreen({ route, navigation }) {
   const [isLoading, setLoading] = useState(true);
   const [dates, setDates] = useState([]);
   const [favorites, setFavorites] = useState([]);
-  const [focusedDate, setFocusedDate] = useState();
-  const [matches, setMatches] = useState([]);
+  const [focusedDate, setFocusedDate] = useState(
+    new Date().toLocaleDateString("en-GB").replaceAll("/", "-")
+  );
+  const [allMatches, setMatches] = useState([]);
 
   const clubMatches = async (guid) => {
     const response = await fetch(
       "https://vblCB.wisseq.eu/VBLCB_WebService/data/OrgMatchesByGuid?issguid=" +
         guid
     );
+
     const matches = await response.json();
     return matches;
   };
@@ -220,6 +106,7 @@ function GamesScreen({ route, navigation }) {
       "https://vblCB.wisseq.eu/VBLCB_WebService/data/TeamMatchesByGuid?teamGuid=" +
         guid
     );
+
     const matches = await response.json();
     return matches;
   };
@@ -229,6 +116,7 @@ function GamesScreen({ route, navigation }) {
       "https://vblCB.wisseq.eu/VBLCB_WebService/data/PouleMatchesByGuid?issguid=" +
         guid
     );
+
     const matches = await response.json();
     return matches;
   };
@@ -242,13 +130,13 @@ function GamesScreen({ route, navigation }) {
 
         switch (type) {
           case "club":
-            matches = [...matches, ...(await clubMatches(guid))];
+            matches.push(...(await clubMatches(guid)));
             break;
           case "team":
-            matches = [...matches, ...(await teamMatches(guid))];
+            matches.push(...(await teamMatches(guid)));
             break;
           case "poule":
-            matches = [...matches, ...(await pouleMatches(guid))];
+            matches.push(...(await pouleMatches(guid)));
             break;
         }
       })
@@ -258,11 +146,22 @@ function GamesScreen({ route, navigation }) {
   };
 
   const removeDuplicateMatches = (matches) => {
-    matches.filter(function (match, pos) {
-      return matches.indexOf(match) == pos;
-    });
+    var seen = {};
+    var uniqueItems = [];
 
-    return matches;
+    for (var i = 0; i < matches.length; i++) {
+      var currentItem = matches[i];
+      var currentGuidValue = currentItem["guid"];
+
+      if (!seen[currentGuidValue]) {
+        seen[currentGuidValue] = 1;
+        uniqueItems.push(currentItem);
+      } else {
+        seen[currentGuidValue]++;
+      }
+    }
+
+    return uniqueItems;
   };
 
   const sortMatches = (matches) => {
@@ -293,8 +192,6 @@ function GamesScreen({ route, navigation }) {
         extractedDates.push(match.datumString);
       }
     });
-
-    // console.log(extractedDates);
 
     return extractedDates;
   };
@@ -334,6 +231,7 @@ function GamesScreen({ route, navigation }) {
         const possibleDates = extractDates(sortedMatches);
         startdate = startDate(startdate, possibleDates);
 
+        setFocusedDate(startdate);
         setMatches(sortedMatches);
         setDates(possibleDates);
       });
@@ -357,73 +255,62 @@ function GamesScreen({ route, navigation }) {
     );
   }, []);
 
-  // useFocusEffect(
-  //   React.useCallback(() => {
-  //     getDates(
-  //       new Date()
-  //         .toLocaleDateString("nl-BE", {
-  //           year: "numeric",
-  //           month: "numeric",
-  //           day: "numeric",
-  //         })
-  //         .toString()
-  //         .replaceAll("/", "-")
-  //     );
-  //   })
-  // );
-
   return isLoading ? (
     <ActivityIndicator />
   ) : favorites.length > 0 ? (
-    <Tab.Navigator
-      className="w-full"
-      indicatorStyle={{ backgroundColor: "#fb923c", height: 2 }}
-      screenOptions={{
-        tabBarLabelStyle: {
-          fontSize: 16,
-          fontWeight: 700,
-          textTransform: "none",
-          color: "#000",
-        },
-        tabBarActiveTintColor: "#fb923c",
-        tabBarInactiveTintColor: "#374151",
-        tabBarItemStyle: {
-          borderRadius: 4,
-        },
-        tabBarStyle: {
-          backgroundColor: "white",
-          display: "none",
-        },
-        // headerShown: false,
-        // lazy: true,
-      }}
-    >
-      {dates.map((date) => {
-        return (
-          <Tab.Screen
-            key={date}
-            name={date}
-            component={GamesByDateScreen}
-            options={{
-              title: date,
-              // headerShown: false,
-              // focus: date == focusedDate ? true : false,
-              // lazy: true,
-            }}
-            initialParams={{
-              date: date,
-              matches: matches.filter(
-                (match) =>
-                  new Date(
-                    match.datumString.split("-").reverse().join("-")
-                  ).toString() ==
-                  new Date(date.split("-").reverse().join("-")).toString()
-              ),
-            }}
-          />
-        );
-      })}
-    </Tab.Navigator>
+    dates.length > 0 ? (
+      <Tab.Navigator
+        className="w-full"
+        indicatorStyle={{ backgroundColor: "#fb923c", height: 2 }}
+        initialRouteName={focusedDate}
+        screenOptions={{
+          tabBarLabelStyle: {
+            fontSize: 16,
+            fontWeight: 700,
+            textTransform: "none",
+            color: "#000",
+          },
+          tabBarActiveTintColor: "#fb923c",
+          tabBarInactiveTintColor: "#374151",
+          tabBarItemStyle: {
+            borderRadius: 4,
+          },
+          tabBarStyle: {
+            backgroundColor: "white",
+            display: "none",
+          },
+          headerShown: false,
+          lazy: true,
+        }}
+      >
+        {dates.map((date) => {
+          return (
+            <Tab.Screen
+              key={date}
+              name={date}
+              component={GamesByDateScreen}
+              options={{
+                title: date,
+              }}
+              initialParams={{
+                date: date,
+                matches: allMatches.filter(
+                  (match) =>
+                    new Date(
+                      match.datumString.split("-").reverse().join("-")
+                    ).toString() ==
+                    new Date(date.split("-").reverse().join("-")).toString()
+                ),
+              }}
+            />
+          );
+        })}
+      </Tab.Navigator>
+    ) : (
+      <View className="flex items-center justify-center h-full px-3">
+        <NoDataComponent />
+      </View>
+    )
   ) : (
     <View className="flex items-center justify-center h-full px-3">
       <NoFavoriteComponent />
