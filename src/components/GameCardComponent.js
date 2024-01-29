@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Linking, Text, View } from "react-native";
 import { Icon } from "react-native-elements";
 import { Image } from "expo-image";
-import FastImage from "react-native-fast-image";
 
 function GameCardComponent({ game }) {
   return (
