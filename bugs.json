@@ -13,6 +13,7 @@
   },
   {
     "title": "Match opent automatisch",
-    "description": "Bij het scrollen door de wedstrijden op de start pagina, opent er soms een match."
+    "description": "Bij het scrollen door de wedstrijden op de start pagina, opent er soms een match.",
+    "temp_solution": "Door te scroll op het component dat de datum weergeeft wordt het match component niet geactiveerd."
   }
 ]
