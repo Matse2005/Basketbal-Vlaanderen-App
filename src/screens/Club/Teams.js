@@ -41,6 +41,7 @@ function ClubTeamsScreen({ route, navigation }) {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    getClub();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -78,28 +79,30 @@ function ClubTeamsScreen({ route, navigation }) {
           disableVirtualization
           renderItem={({ item }) => (
             <View className="h-full space-y-4">
-              <View className="flex items-center flex-1 gap-1 px-5 py-4 text-center bg-white">
-                <Image
-                  PlaceholderContent={<ActivityIndicator />}
-                  placeholderStyle={{ backgroundColor: "#fff" }}
-                  cachePolicy="memory"
-                  source={{
-                    uri:
-                      "https://vbl.wisseq.eu/vbldataOrganisation/BVBL" +
-                      item.guid.match(/\d+/g)[0] +
-                      ".jpg",
-                  }}
-                  resizeMode="contain"
-                  className="w-28 h-28"
-                />
-                <Text className="text-lg font-bold text-center text-gray-700">
-                  {item.naam}
-                </Text>
-                <Text className="text-center text-gray-500">
-                  Stamnummer {item.stamNr}
-                </Text>
+              <View className="px-5 py-4 bg-white rounded-lg">
+                <View className="flex items-center flex-1 gap-1 text-center">
+                  <Image
+                    PlaceholderContent={<ActivityIndicator />}
+                    placeholderStyle={{ backgroundColor: "#fff" }}
+                    cachePolicy="memory"
+                    source={{
+                      uri:
+                        "https://vbl.wisseq.eu/vbldataOrganisation/BVBL" +
+                        item.guid.match(/\d+/g)[0] +
+                        ".jpg",
+                    }}
+                    resizeMode="contain"
+                    className="w-28 h-28"
+                  />
+                  <Text className="text-lg font-bold text-center text-gray-700">
+                    {item.naam}
+                  </Text>
+                  <Text className="text-center text-gray-500">
+                    Stamnummer {item.stamNr}
+                  </Text>
+                </View>
               </View>
-              <View className="mb-2 space-y-2">
+              <View className="mb-6 space-y-2 ">
                 <Text className="text-lg font-bold">Teams</Text>
                 {item.teams.map((team, index) => {
                   return (

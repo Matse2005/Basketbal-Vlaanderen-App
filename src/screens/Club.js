@@ -3,6 +3,9 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 
 import ClubInfoScreen from "./Club/Info";
 import ClubTeamsScreen from "./Club/Teams";
+import { useEffect } from "react";
+import { Icon } from "react-native-elements";
+import { checkFavorite, toggleFavorite } from "../logic/Favorites";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -81,8 +84,35 @@ const Tab = createMaterialTopTabNavigator();
 //   );
 // }
 
-function ClubScreen({ route }) {
+function ClubScreen({ route, navigation }) {
   const { guid } = route.params;
+
+  const setIcon = async () => {
+    var favorite = null;
+
+    await checkFavorite(guid, "club").then(function (favoriteState) {
+      favorite = favoriteState;
+    });
+
+    navigation.setOptions({
+      headerRight: () => (
+        <Icon
+          name={favorite ? "heart" : "heart-outline"}
+          type="ionicon"
+          onPress={() => {
+            toggleFavorite(guid, "club").then(() => {
+              setIcon();
+            });
+          }}
+          color="#fb923c"
+        />
+      ),
+    });
+  };
+
+  useEffect(() => {
+    setIcon();
+  }, []);
 
   return (
     <Tab.Navigator

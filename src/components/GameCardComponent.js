@@ -1,24 +1,28 @@
 // import "react-native-gesture-handler";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Linking, Text, View } from "react-native";
 import { Icon, Image } from "react-native-elements";
+import FastImage from "react-native-fast-image";
 
 function GameCardComponent({ game }) {
   return (
-    <View className="box-border w-full p-5 mb-4 bg-white rounded-lg ">
-      <View className="flex flex-row items-center justify-between w-full">
+    <View className="box-border p-5 mb-4 bg-white rounded-lg">
+      <View className="flex flex-row items-center justify-between w-full ">
         <View className="items-center justify-center flex-1 w-auto space-y-3">
           <Image
             PlaceholderContent={<ActivityIndicator />}
             placeholderStyle={{ backgroundColor: "#fff" }}
-            cachePolicy="memory"
             source={{
               uri:
                 "https://vbl.wisseq.eu/vbldataOrganisation/BVBL" +
                 game.thuis.guid.match(/\d+/g)[0] +
                 ".jpg",
+              // cache: "default",
+              // priority: FastImage.priority.normal,
             }}
+            decode="async"
             resizeMode="contain"
+            // resizeMode={FastImage.resizeMode.contain}
             className=" w-11 h-11"
           />
           <Text className=" text-[10px] text-center">{game.thuis.naam}</Text>
@@ -44,9 +48,11 @@ function GameCardComponent({ game }) {
               />
             )}
           </Text>
-          <Text className="text-lg font-bold text-center text-orange-400">
+          <Text className="text-lg font-bold text-center text-orange-400 ">
             {game.uitslag == ""
-              ? game.tijd.replace(".", ":")
+              ? game.tijd !== ""
+                ? game.tijd.replace(".", ":")
+                : "Starttijd onbekend"
               : game.uitslag.replaceAll(" ", "").replaceAll("-", " / ")}
           </Text>
           <Text className="text-xs text-center text-gray-500 uppercase ">
@@ -62,20 +68,21 @@ function GameCardComponent({ game }) {
           <Image
             PlaceholderContent={<ActivityIndicator />}
             placeholderStyle={{ backgroundColor: "#fff" }}
-            cachePolicy="memory"
             source={{
               uri:
                 "https://vbl.wisseq.eu/vbldataOrganisation/BVBL" +
                 game.uit.guid.match(/\d+/g)[0] +
                 ".jpg",
+              cache: "default",
             }}
+            decode="async"
             resizeMode="contain"
             className=" w-11 h-11"
           />
           <Text className=" text-[10px] text-center">{game.uit.naam}</Text>
         </View>
       </View>
-      <View className="flex flex-row items-center justify-center w-full mt-2">
+      <View className="flex flex-row items-center justify-center mt-2">
         <Text className="text-xs text-gray-500">{game.location}</Text>
       </View>
     </View>

@@ -1,345 +1,178 @@
 import React, { useEffect, useState } from "react";
 import {
-  StatusBar,
   ActivityIndicator,
   FlatList,
-  Text,
   View,
-  TouchableOpacity,
   RefreshControl,
   SafeAreaView,
+  Text,
 } from "react-native";
 import GameComponent from "../components/GameComponent";
-import { Icon, Image } from "react-native-elements";
-import { getFavorites, storeFavorites } from "../logic/Favorites";
+import { getFavorites } from "../logic/Favorites";
+import { NoDataComponent } from "../components/NoData";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import { useFocusEffect } from "@react-navigation/native";
+import { NoFavoriteComponent } from "../components/NoFavorite";
+import { useCallback } from "react";
 
-function GamesScreen({ route, navigation }) {
+const Tab = createMaterialTopTabNavigator();
+
+function GamesByDateScreen({ route, navigation }) {
   const [refreshing, setRefreshing] = React.useState(false);
   const [isLoading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
-  var [dates, setDates] = useState({});
-  var favorites = null;
+  // const { matches } = route.params;
+  // console.log(matches);
+  const [matches, setMatches] = useState(route.params.matches);
+  const { date } = route.params;
 
-  const { givenDate } = route.params;
+  // const clubMatches = async (guid) => {
+  //   const response = await fetch(
+  //     "https://vblCB.wisseq.eu/VBLCB_WebService/data/OrgMatchesByGuid?issguid=" +
+  //       guid
+  //   );
+  //   const matches = await response.json();
+  //   return matches;
+  // };
 
-  const [date, setDate] = useState(
-    // givenDate ??
-    // new Date()
-    //   .toLocaleDateString("nl-BE", {
-    //     year: "numeric",
-    //     month: "numeric",
-    //     day: "numeric",
-    //   })
-    //   .toString()
-    //   .replaceAll("/", "-")
-    "3-2-2024"
-  );
+  // const teamMatches = async (guid) => {
+  //   const response = await fetch(
+  //     "https://vblCB.wisseq.eu/VBLCB_WebService/data/TeamMatchesByGuid?teamGuid=" +
+  //       guid
+  //   );
+  //   const matches = await response.json();
+  //   return matches;
+  // };
 
-  // console.log(date);
+  // const pouleMatches = async (guid) => {
+  //   const response = await fetch(
+  //     "https://vblCB.wisseq.eu/VBLCB_WebService/data/PouleMatchesByGuid?issguid=" +
+  //       guid
+  //   );
+  //   const matches = await response.json();
+  //   return matches;
+  // };
 
-  // Temporarly
-  var favoritesDefault = [
-    "club_BVBL1255",
-    "team_BVBL1171J21%20%201",
-    "team_BVBL1171HSE%20%202",
-    "team_BVBL1171DSE%20%201",
-    "team_BVBL1171HSE%20%201",
-    "team_BVBL1171J18%20%201",
-  ];
+  // const retrieveMatches = async (favorites) => {
+  //   var matches = [];
 
-  storeFavorites(favoritesDefault);
-  // console.log(favorites);
+  //   await Promise.all(
+  //     favorites.map(async (favorite) => {
+  //       const [type, guid] = favorite.split("_");
 
-  function findClosestDate(targetDateString, dateArray) {
-    const targetDate = new Date(
-      targetDateString.split("-").reverse().join("-")
-    );
+  //       switch (type) {
+  //         case "club":
+  //           matches = [...matches, ...(await clubMatches(guid))];
+  //           break;
+  //         case "team":
+  //           matches = [...matches, ...(await teamMatches(guid))];
+  //           break;
+  //         case "poule":
+  //           matches = [...matches, ...(await pouleMatches(guid))];
+  //           break;
+  //       }
+  //     })
+  //   );
 
-    // Convert the array of strings to an array of Date objects
-    const possibleDates = dateArray.map(
-      (dateString) => new Date(dateString.split("-").reverse().join("-"))
-    );
+  //   return matches;
+  // };
 
-    possibleDates.forEach((dateString, index) => {
-      if (dateString == targetDate) return dateArray[index];
-    });
+  // const removeDuplicateMatches = (matches) => {
+  //   matches.filter(function (match, pos) {
+  //     return matches.indexOf(match) == pos;
+  //   });
 
-    // Calculate the differences between each date and the target date
-    const differences = possibleDates.map((date) => date - targetDate);
+  //   return matches;
+  // };
 
-    // Filter out negative differences (dates in the past)
-    const positiveDifferences = differences.filter((diff) => diff >= 0);
+  // const sortMatches = (matches) => {
+  //   function compareDateTime(a, b) {
+  //     const dateA = new Date(
+  //       `${a.datumString.split("-").reverse().join("-")} ${
+  //         a.beginTijd !== "" ? a.beginTijd.replace(".", ":") : "00:00"
+  //       }`
+  //     );
+  //     const dateB = new Date(
+  //       `${b.datumString.split("-").reverse().join("-")} ${
+  //         b.beginTijd !== "" ? b.beginTijd.replace(".", ":") : "00:00"
+  //       }`
+  //     );
 
-    // Find the minimum positive difference
-    const minDifference = Math.min(...positiveDifferences);
+  //     return dateA - dateB;
+  //   }
 
-    // Find the index of the closest date
-    const closestDateIndex = differences.indexOf(minDifference);
+  //   matches.sort(compareDateTime);
 
-    return dateArray[closestDateIndex];
-  }
+  //   return matches;
+  // };
 
-  const getDates = async (matches) => {
-    var returnDates = {};
-    var allDates = [];
+  // const filterOnDate = (matches) => {
+  //   const filtered = matches.filter(
+  //     (match) =>
+  //       new Date(match.datumString.split("-").reverse().join("-")).toString() ==
+  //       new Date(date.split("-").reverse().join("-")).toString()
+  //   );
 
-    matches.forEach((match) => {
-      if (!allDates.includes(match.datumString)) {
-        allDates.push(match.datumString);
-      }
-    });
+  //   return filtered;
+  // };
 
-    if (!allDates.includes(date)) {
-      setDate(findClosestDate(date, allDates));
-    }
+  // const getMatches = async (startdate) => {
+  //   try {
+  //     await retrieveMatches(await getFavorites()).then((matches) => {
+  //       const uniqueMatches = removeDuplicateMatches(matches);
+  //       const sortedMatches = sortMatches(uniqueMatches);
+  //       const filteredMatches = filterOnDate(sortedMatches);
 
-    for (let i = 0; i < allDates.length; i++) {
-      if (
-        new Date(allDates[i].split("-").reverse().join("-")).toString() ==
-        new Date(date.split("-").reverse().join("-")).toString()
-      ) {
-        returnDates["curr"] = allDates[i];
-        returnDates["prev"] = [];
-        returnDates["next"] = [];
-        if (allDates[i - 1]) returnDates["prev"].push(allDates[i - 1]);
-        if (allDates[i - 2]) returnDates["prev"].push(allDates[i - 2]);
-        if (allDates[i + 1]) returnDates["next"].push(allDates[i + 1]);
-        if (allDates[i + 2]) returnDates["next"].push(allDates[i + 2]);
-      }
-    }
+  //       setMatches(filteredMatches);
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-    // console.log(allDates);
-
-    setDates(returnDates);
-    return;
-  };
-
-  const getMatches = async () => {
-    try {
-      var items = [];
-      favorites == null ? (favorites = await getFavorites()) : null;
-      // console.log(favorites);
-
-      for (const favorite of favorites) {
-        if (favorite.split("_")[0] == "team") {
-          const response = await fetch(
-            "https://vblCB.wisseq.eu/VBLCB_WebService/data/TeamMatchesByGuid?teamGuid=" +
-              favorite.split("_")[1]
-          );
-          const json = await response.json();
-          items = [...items, ...json];
-        }
-      }
-
-      function compareDateTime(a, b) {
-        const dateA = new Date(
-          `${a.datumString
-            .split("-")
-            .reverse()
-            .join("-")} ${a.beginTijd.replace(".", ":")}`
-        );
-        const dateB = new Date(
-          `${b.datumString
-            .split("-")
-            .reverse()
-            .join("-")} ${b.beginTijd.replace(".", ":")}`
-        );
-
-        return dateA - dateB;
-      }
-
-      items.sort(compareDateTime);
-
-      const filtered = items.filter(
-        (item) =>
-          new Date(
-            item.datumString.split("-").reverse().join("-")
-          ).toString() ==
-          new Date(date.split("-").reverse().join("-")).toString()
-        // new Date("03-02-2024".split("-").reverse().join("-")).toString()
-      );
-
-      // getDates(items);
-      setData(filtered);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     console.log(matches);
+  //     setLoading(false);
+  //   }, [])
+  // );
 
   useEffect(() => {
-    getMatches();
-  }, []);
+    // console.log(matches);
+    setLoading(false);
+  });
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    // getMatches();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
 
   return (
-    <SafeAreaView style={{ flex: 1 }} className="items-center w-full ">
-      {/* {isLoading ? (
-        <ActivityIndicator />
-      ) : (
-        <View className="flex flex-row items-center justify-between w-full px-2 pt-2 pb-4 mt-2">
-          {dates["next"] && dates["next"][0] ? (
-            <TouchableOpacity className="flex items-center justify-center px-3 py-2">
-              <Text>←</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity className="flex items-center justify-center px-3 py-2">
-              <Text> </Text>
-            </TouchableOpacity>
-          )}
-
-          {dates["prev"] && dates["prev"][1] ? (
-            <TouchableOpacity
-              onPress={() => {
-                date = dates["prev"][1];
-              }}
-              className="flex items-center justify-center px-3 py-2"
-            >
-              <Text className="text-xl font-bold">
-                {Intl.DateTimeFormat("nl", {
-                  day: "numeric",
-                }).format(
-                  new Date(dates["prev"][1].split("-").reverse().join("-"))
-                )}
-              </Text>
-              <Text className="text-sm uppercase">
-                {Intl.DateTimeFormat("nl", {
-                  month: "short",
-                }).format(
-                  new Date(dates["prev"][1].split("-").reverse().join("-"))
-                )}
-              </Text>
-            </TouchableOpacity>
-          ) : (
-            <View>
-              <Text className="text-xl font-bold"> </Text>
-              <Text className="text-sm uppercase"> </Text>
-            </View>
-          )}
-
-          {dates["prev"] && dates["prev"][0] ? (
-            <TouchableOpacity className="flex items-center justify-center px-3 py-2">
-              <Text className="text-xl font-bold">
-                {Intl.DateTimeFormat("nl", {
-                  day: "numeric",
-                }).format(
-                  new Date(dates["prev"][0].split("-").reverse().join("-"))
-                )}
-              </Text>
-              <Text className="text-sm uppercase">
-                {Intl.DateTimeFormat("nl", {
-                  month: "short",
-                }).format(
-                  new Date(dates["prev"][0].split("-").reverse().join("-"))
-                )}
-              </Text>
-            </TouchableOpacity>
-          ) : (
-            <View>
-              <Text className="text-xl font-bold"> </Text>
-              <Text className="text-sm uppercase"> </Text>
-            </View>
-          )}
-
-          {dates["curr"] ? (
-            <TouchableOpacity className="flex items-center justify-center px-3 py-2 bg-orange-400 rounded-lg">
-              <Text className="text-xl font-bold text-white">
-                {Intl.DateTimeFormat("nl", {
-                  day: "numeric",
-                }).format(
-                  new Date(dates["curr"].split("-").reverse().join("-"))
-                )}
-              </Text>
-              <Text className="text-sm text-white uppercase">
-                {Intl.DateTimeFormat("nl", {
-                  month: "short",
-                }).format(
-                  new Date(dates["curr"].split("-").reverse().join("-"))
-                )}
-              </Text>
-            </TouchableOpacity>
-          ) : (
-            <View>
-              <Text className="text-xl font-bold"> </Text>
-              <Text className="text-sm uppercase"> </Text>
-            </View>
-          )}
-
-          {dates["next"] && dates["next"][0] ? (
-            <TouchableOpacity className="flex items-center justify-center px-3 py-2">
-              <Text className="text-xl font-bold">
-                {Intl.DateTimeFormat("nl", {
-                  day: "numeric",
-                }).format(
-                  new Date(dates["next"][0].split("-").reverse().join("-"))
-                )}
-              </Text>
-              <Text className="text-sm uppercase">
-                {Intl.DateTimeFormat("nl", {
-                  month: "short",
-                }).format(
-                  new Date(dates["next"][0].split("-").reverse().join("-"))
-                )}
-              </Text>
-            </TouchableOpacity>
-          ) : (
-            <View>
-              <Text className="text-xl font-bold"> </Text>
-              <Text className="text-sm uppercase"> </Text>
-            </View>
-          )}
-
-          {dates["next"] && dates["next"][1] ? (
-            <TouchableOpacity className="flex items-center justify-center px-3 py-2">
-              <Text className="text-xl font-bold">
-                {Intl.DateTimeFormat("nl", {
-                  day: "numeric",
-                }).format(
-                  new Date(dates["next"][1].split("-").reverse().join("-"))
-                )}
-              </Text>
-              <Text className="text-sm uppercase">
-                {Intl.DateTimeFormat("nl", {
-                  month: "short",
-                }).format(
-                  new Date(dates["next"][1].split("-").reverse().join("-"))
-                )}
-              </Text>
-            </TouchableOpacity>
-          ) : (
-            <View>
-              <Text className="text-xl font-bold"> </Text>
-              <Text className="text-sm uppercase"> </Text>
-            </View>
-          )}
-
-          {dates["next"] && dates["next"][0] ? (
-            <TouchableOpacity className="flex items-center justify-center px-3 py-2">
-              <Text>→</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity className="flex items-center justify-center px-3 py-2">
-              <Text> </Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      )} */}
+    <SafeAreaView style={{ flex: 1 }} className="items-center w-full">
       <View className="items-center w-full h-full">
+        <View className="items-center w-full px-5 py-4 space-y-4 text-center bg-white rounded">
+          <Text className="w-full text-base font-bold text-center text-gray-700">
+            {Intl.DateTimeFormat("nl", {
+              day: "numeric",
+              // weekday: "long",
+              month: "short",
+              year: "numeric",
+            }).format(new Date(`${date.split("-").reverse().join("-")}`))}
+          </Text>
+        </View>
         {isLoading ? (
           <ActivityIndicator />
         ) : (
           <FlatList
-            className="mt-2 mb-24"
-            data={data}
+            className="mt-2"
+            data={matches}
             showsVerticalScrollIndicator={false}
             keyExtractor={({ wedID }) => wedID}
+            ListEmptyComponent={<NoDataComponent />}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
@@ -363,6 +196,238 @@ function GamesScreen({ route, navigation }) {
         )}
       </View>
     </SafeAreaView>
+  );
+}
+
+function GamesScreen({ route, navigation }) {
+  const [isLoading, setLoading] = useState(true);
+  const [dates, setDates] = useState([]);
+  const [favorites, setFavorites] = useState([]);
+  const [focusedDate, setFocusedDate] = useState();
+  const [matches, setMatches] = useState([]);
+
+  const clubMatches = async (guid) => {
+    const response = await fetch(
+      "https://vblCB.wisseq.eu/VBLCB_WebService/data/OrgMatchesByGuid?issguid=" +
+        guid
+    );
+    const matches = await response.json();
+    return matches;
+  };
+
+  const teamMatches = async (guid) => {
+    const response = await fetch(
+      "https://vblCB.wisseq.eu/VBLCB_WebService/data/TeamMatchesByGuid?teamGuid=" +
+        guid
+    );
+    const matches = await response.json();
+    return matches;
+  };
+
+  const pouleMatches = async (guid) => {
+    const response = await fetch(
+      "https://vblCB.wisseq.eu/VBLCB_WebService/data/PouleMatchesByGuid?issguid=" +
+        guid
+    );
+    const matches = await response.json();
+    return matches;
+  };
+
+  const retrieveMatches = async (favorites) => {
+    var matches = [];
+
+    await Promise.all(
+      favorites.map(async (favorite) => {
+        const [type, guid] = favorite.split("_");
+
+        switch (type) {
+          case "club":
+            matches = [...matches, ...(await clubMatches(guid))];
+            break;
+          case "team":
+            matches = [...matches, ...(await teamMatches(guid))];
+            break;
+          case "poule":
+            matches = [...matches, ...(await pouleMatches(guid))];
+            break;
+        }
+      })
+    );
+
+    return matches;
+  };
+
+  const removeDuplicateMatches = (matches) => {
+    matches.filter(function (match, pos) {
+      return matches.indexOf(match) == pos;
+    });
+
+    return matches;
+  };
+
+  const sortMatches = (matches) => {
+    function compareDateTime(a, b) {
+      const dateA = new Date(
+        `${a.datumString.split("-").reverse().join("-")} ${
+          a.beginTijd !== "" ? a.beginTijd.replace(".", ":") : "00:00"
+        }`
+      );
+      const dateB = new Date(
+        `${b.datumString.split("-").reverse().join("-")} ${
+          b.beginTijd !== "" ? b.beginTijd.replace(".", ":") : "00:00"
+        }`
+      );
+
+      return dateA - dateB;
+    }
+
+    matches.sort(compareDateTime);
+
+    return matches;
+  };
+
+  const extractDates = (matches) => {
+    var extractedDates = [];
+    matches.forEach((match) => {
+      if (!extractedDates.includes(match.datumString)) {
+        extractedDates.push(match.datumString);
+      }
+    });
+
+    // console.log(extractedDates);
+
+    return extractedDates;
+  };
+
+  const startDate = (startDate, dates) => {
+    const targetDate = new Date(startDate.split("-").reverse().join("-"));
+    const datesDateFormat = dates.map(
+      (dateString) => new Date(dateString.split("-").reverse().join("-"))
+    );
+
+    if (datesDateFormat.includes(targetDate)) {
+      return startDate;
+    }
+
+    // Calculate the differences between each date and the target date
+    const differences = datesDateFormat.map((date) => date - targetDate);
+
+    // Filter out negative differences (dates in the past)
+    const positiveDifferences = differences.filter((diff) => diff >= 0);
+
+    // Find the minimum positive difference
+    const minDifference = Math.min(...positiveDifferences);
+
+    // Find the index of the closest date
+    const closestDateIndex = differences.indexOf(minDifference);
+
+    // Return the closest date
+    return dates[closestDateIndex];
+  };
+
+  const getDates = async (startdate) => {
+    try {
+      setFavorites(await getFavorites());
+      await retrieveMatches(await getFavorites()).then((matches) => {
+        const uniqueMatches = removeDuplicateMatches(matches);
+        const sortedMatches = sortMatches(uniqueMatches);
+        const possibleDates = extractDates(sortedMatches);
+        startdate = startDate(startdate, possibleDates);
+
+        setMatches(sortedMatches);
+        setDates(possibleDates);
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getDates(
+      new Date()
+        .toLocaleDateString("nl-BE", {
+          year: "numeric",
+          month: "numeric",
+          day: "numeric",
+        })
+        .toString()
+        .replaceAll("/", "-")
+    );
+  }, []);
+
+  // useFocusEffect(
+  //   React.useCallback(() => {
+  //     getDates(
+  //       new Date()
+  //         .toLocaleDateString("nl-BE", {
+  //           year: "numeric",
+  //           month: "numeric",
+  //           day: "numeric",
+  //         })
+  //         .toString()
+  //         .replaceAll("/", "-")
+  //     );
+  //   })
+  // );
+
+  return isLoading ? (
+    <ActivityIndicator />
+  ) : favorites.length > 0 ? (
+    <Tab.Navigator
+      className="w-full"
+      indicatorStyle={{ backgroundColor: "#fb923c", height: 2 }}
+      screenOptions={{
+        tabBarLabelStyle: {
+          fontSize: 16,
+          fontWeight: 700,
+          textTransform: "none",
+          color: "#000",
+        },
+        tabBarActiveTintColor: "#fb923c",
+        tabBarInactiveTintColor: "#374151",
+        tabBarItemStyle: {
+          borderRadius: 4,
+        },
+        tabBarStyle: {
+          backgroundColor: "white",
+          display: "none",
+        },
+        // headerShown: false,
+        // lazy: true,
+      }}
+    >
+      {dates.map((date) => {
+        return (
+          <Tab.Screen
+            key={date}
+            name={date}
+            component={GamesByDateScreen}
+            options={{
+              title: date,
+              // headerShown: false,
+              // focus: date == focusedDate ? true : false,
+              // lazy: true,
+            }}
+            initialParams={{
+              date: date,
+              matches: matches.filter(
+                (match) =>
+                  new Date(
+                    match.datumString.split("-").reverse().join("-")
+                  ).toString() ==
+                  new Date(date.split("-").reverse().join("-")).toString()
+              ),
+            }}
+          />
+        );
+      })}
+    </Tab.Navigator>
+  ) : (
+    <View className="flex items-center justify-center h-full px-3">
+      <NoFavoriteComponent />
+    </View>
   );
 }
 

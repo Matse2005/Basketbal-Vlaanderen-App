@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Icon, Image } from "react-native-elements";
 import GameCardComponent from "../components/GameCardComponent";
+import { OpenGym } from "../components/OpenGym";
 
 function MatchScreen({ route, navigation }) {
   const [refreshing, setRefreshing] = React.useState(false);
@@ -39,6 +40,7 @@ function MatchScreen({ route, navigation }) {
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
     setTimeout(() => {
+      getMatch();
       setRefreshing(false);
     }, 2000);
   }, []);
@@ -56,9 +58,9 @@ function MatchScreen({ route, navigation }) {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
           disableVirtualization={true}
-          className="w-full h-full mt-2"
+          className="h-full mt-2 "
           renderItem={({ item }) => (
-            <View className="space-y-4">
+            <View className="mb-6 space-y-4">
               <GameCardComponent
                 game={{
                   guid: item.doc.guid,
@@ -107,6 +109,21 @@ function MatchScreen({ route, navigation }) {
                     </Text>
                   </View>
                 )}
+              </View>
+              <View className="px-3 space-y-2">
+                <Text className="mb-2 text-lg font-bold">Locatie</Text>
+
+                <OpenGym
+                  address={{
+                    name: item.doc.accommodatieDoc.naam,
+                    street: item.doc.accommodatieDoc.adres.straat,
+                    number: item.doc.accommodatieDoc.adres.huisNr,
+                    bus: item.doc.accommodatieDoc.adres.huisNrToev,
+                    postalcode: item.doc.accommodatieDoc.adres.postcode,
+                    city: item.doc.accommodatieDoc.adres.plaats,
+                    country: item.doc.accommodatieDoc.adres.land,
+                  }}
+                />
               </View>
               <View className="px-3 space-y-2">
                 <Text className="text-lg font-bold">Competities</Text>

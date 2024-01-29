@@ -4044,3 +4044,595 @@ sportModule.filter("isSpelerOrBeg", function () {
         });
     },
   ]);
+
+("use strict");
+sportModule.controller("MatchDetailController", [
+  "$rootScope",
+  "$scope",
+  "$http",
+  "WQData",
+  "$sce",
+  "wqGlobal",
+  function (t, e, a, i, r, n) {
+    (e.sportModuleBaseUrl = t.sportModuleBaseUrl),
+      (e.dwfUrl = t.dwfUrl),
+      (e.dwfUrlBeta = t.dwfUrlBeta),
+      (e.showUrlBetaBtn = e.dwfUrlBeta.startsWith("https")),
+      (t.sportModuleClubLogoUrlPrefix = t.sportModuleClubLogoUrlPrefix),
+      (e.wqM = []),
+      (e.wqM.scorethuis = ""),
+      (e.wqM.scoreuit = ""),
+      (e.wqM.pin = ""),
+      (e.init = function (a) {
+        (t.userRelGuid = i.getRelguid()),
+          (void 0 !== a && "" !== a) ||
+            "undefined" == typeof Storage ||
+            (a = localStorage.lastWedGUID),
+          (e.guid = a),
+          (t.LastWedGUID = a),
+          e.tabSel("Alg"),
+          e.loadWedstrijd();
+        let r = "";
+        "undefined" != typeof Storage &&
+          (localStorage.setItem("lastWedGUID", a),
+          "undefined" === (r = localStorage.pincode) && (r = "")),
+          (e.wqM.pin = r);
+      }),
+      (e.tabSel = function (t) {
+        e.tabSelected = t;
+      }),
+      (e.loadWedstrijd = function () {
+        a.get(e.sportModuleBaseUrl + "/MatchByWedGuid?issguid=" + e.guid).then(
+          function (a) {
+            var i = a.data[0].doc;
+            (e.basicTruncate = function (t, a = 37) {
+              return (
+                (e.truncStr = t.substring(0, a)),
+                t.length > a ? e.truncStr + "..." : t
+              );
+            }),
+              (e.truncTeamThuisNaam = e.basicTruncate(i.teamThuisNaam)),
+              (e.truncTeamUitNaam = e.basicTruncate(i.teamUitNaam)),
+              (e.ShowfullTeamName = function (t) {
+                t.length >= 37 &&
+                  (t === e.truncTeamThuisNaam &&
+                    (e.truncTeamThuisNaam = i.teamThuisNaam),
+                  t === e.truncTeamUitNaam &&
+                    (e.truncTeamUitNaam = i.teamUitNaam));
+              }),
+              (e.ShowTruncTeamName = function (t) {
+                t.length > 37 &&
+                  (t === e.truncTeamThuisNaam &&
+                    (e.truncTeamThuisNaam = e.basicTruncate(i.teamThuisNaam)),
+                  t === e.truncTeamUitNaam &&
+                    (e.truncTeamUitNaam = e.basicTruncate(i.teamUitNaam)));
+              }),
+              (t.teamThuisNaam = i.teamThuisNaam),
+              (t.teamThuisGUID = i.teamThuisGUID),
+              (t.wedID = i.wedID),
+              (t.teamUitNaam = i.teamUitNaam),
+              (t.teamUitGUID = i.teamUitGUID),
+              (t.clubThuisGUID = t.teamThuisGUID.substring(0, 8)),
+              (t.clubUitGUID = t.teamUitGUID.substring(0, 8)),
+              (t.pouleGUID = i.pouleGUID),
+              (t.dwfI4Speler = i.dwfI4Speler),
+              (t.dwfPdf = ""),
+              (t.dwfInfo = ""),
+              (t.Scores = "123"),
+              null != i.dwfI4Match &&
+                ((t.dwfPdf = i.dwfI4Match.dwfPdf),
+                (t.dwfInfo = i.dwfI4Match.dwfInfo),
+                (t.Scores = i.dwfI4Match.scores)),
+              (e.dwfPdfShowScore = !0),
+              "U10" == e.dwfPdf && (e.dwfPdfShowScore = !1),
+              (t.authorized4Match = t.chkIfAuthorized4Match(!0)),
+              (t.verslagIsPublic = !1),
+              (t.dwfVerslagMember = !1);
+            var n = t.teamThuisGUID.substring(8, 11);
+            (t.verslagIsPublic =
+              t.authorized4Match || "HSE" == n || "DSE" == n),
+              (t.datumString = i.datumString),
+              (t.pouleNaam = i.pouleNaam),
+              (e.beginTijd = i.beginTijd),
+              (e.matchUitslag = i.uitslag),
+              (e.matchUitslagT = 0),
+              (e.matchUitslagU = 0),
+              "" !== e.matchUitslag &&
+                ((e.matchUitslagT = e.matchUitslag.substring(0, 3)),
+                (e.matchUitslagU = e.matchUitslag.substring(4))),
+              (e.matchjsDTCode = i.jsDTCode);
+            var o = i.accommodatieDoc;
+            e.accommOmschr = o.naam;
+            var s = o.adres;
+            if (
+              ((e.accommnr = s.huisNr),
+              (e.Accommstraat = s.straat),
+              (e.AccommZipp = s.postcode),
+              (e.AccommStad = s.plaats),
+              (e.AccommLand = s.land),
+              null == i.wedOff || 0 == i.wedOff.length)
+            )
+              (e.officString = ""), (e.showOfficial = !1);
+            else {
+              var u;
+              (e.showOfficial = !0), (e.officString = "");
+              var c = i.wedOff.length;
+              for (u = 0; u < c; u++) e.officString += ", " + i.wedOff[u];
+              e.officString = e.officString.substring(2);
+            }
+            if (
+              ((e.dwfStatus = i.dwfStatus),
+              (e.uitslagInvoerenDisabled = !0),
+              (e.showbuttons = !1),
+              e.matchUitslag.length > 0)
+            )
+              (e.uitslagBekend = !0), e.tabSel("DWF"), (e.showbuttons = !1);
+            else {
+              e.showbuttons = !0;
+              var l = Date.now();
+              (l += 1),
+                e.DSTInEffect(new Date()) && (l += 36e5),
+                l > e.matchjsDTCode &&
+                  ((e.uitslagInvoerenDisabled = !1), e.tabSel("DWF"));
+            }
+            null === e.accommnr && (e.accommnr = "");
+            var d =
+              e.AccommZipp +
+              "+" +
+              e.AccommStad +
+              "+" +
+              e.Accommstraat +
+              " " +
+              e.accommnr +
+              "+,+" +
+              e.AccommLand;
+            (e.url =
+              "https://www.google.com/maps/embed/v1/place?q=" +
+              d +
+              "&key=AIzaSyAKvedS92uNSiu31byzY18gFOOSMyxuNFA"),
+              (e.map = r.trustAsResourceUrl(e.url));
+          }
+        );
+      }),
+      (e.DSTInEffect = function (t) {
+        let e = !1;
+        return (
+          t.getTimezoneOffset() !==
+            new Date(t.getFullYear(), 0, 1).getTimezoneOffset() && (e = !0),
+          e
+        );
+      }),
+      (e.putUitslag = function () {
+        if (
+          "" === e.wqM.scorethuis ||
+          "" === e.wqM.scoreuit ||
+          "" === e.wqM.pin
+        )
+          return;
+        "undefined" != typeof Storage &&
+          localStorage.setItem("pincode", e.wqM.pin);
+        const i =
+          ("   " + e.wqM.scorethuis).slice(-3) +
+          "-" +
+          ("   " + e.wqM.scoreuit).slice(-3);
+        (e.showbuttons = !1),
+          a
+            .get(
+              e.sportModuleBaseUrl +
+                "/UitslagByWedGuidCodeEnPin?issguid=" +
+                e.guid +
+                "&score=" +
+                i +
+                "&code1=" +
+                e.wqM.pin +
+                "&code2=" +
+                t.teamThuisGUID +
+                t.teamUitGUID
+            )
+            .then(function (t) {
+              "ok" === t.data
+                ? ((e.uitslagInvoerenDisabled = !0),
+                  (e.matchUitslag = uitslag2Process),
+                  n.wqAlert("Uitslag wordt verwerkt!"))
+                : ((e.uitslagInvoerenDisabled = !1),
+                  (e.showbuttons = !0),
+                  n.wqAlert(
+                    "Fout! Pincode onjuist of verwerking niet mogelijk!"
+                  ));
+            });
+      }),
+      (e.go2DWF = function (a) {
+        if (t.chkIfAuthorized4Match()) {
+          let t = !0;
+          if ((e.dwfStatus, t)) {
+            const a = Date.now(),
+              i = a - 1728e5,
+              r = a + 504e5;
+            (e.matchjsDTCode > r || e.matchjsDTCode < i) && (t = !1);
+          }
+          if (!t) {
+            n.wqAlert(
+              "Wedstrijd niet beschikbaar (v.a. wedstrijddag t/m 5 dagen erna)"
+            );
+            const t = i.getRelguid();
+            if ("BVBL57508" !== t && "BVBL185889" !== t && "BVBL183253" !== t)
+              return;
+          }
+          let r = e.dwfUrl;
+          "beta" == a && (r = e.dwfUrlBeta),
+            (r += "/?guid=" + e.guid),
+            (r += "&username=" + i.getUsername()),
+            window.open(r);
+        }
+      }),
+      (t.chkIfAuthorized4Match = function (e) {
+        t.userRelGuid = "na";
+        const a = null == e || !1 === e;
+        if (!i.loggedIn())
+          return (
+            a &&
+              n.wqAlert(
+                "Inloggen is vereist om wijzigingen aan te brengen of naar DWF te gaan!"
+              ),
+            !1
+          );
+        t.userRelGuid = i.getRelguid();
+        let r = i.getRelguid();
+        if ("" === r || "na" === r)
+          return a && n.wqAlert("Account niet gekoppeld aan lidnummer!"), !1;
+        const o = i.getRollen(),
+          s = o[0].Description,
+          u = JSON.parse(s).curOrgGuids,
+          c = u.length;
+        var l = o.filter(function (t) {
+          return "DwfVerslag" === t.AccountRolType;
+        })[0];
+        null != l && "DwfVerslag" === l.AccountRolType
+          ? (t.dwfVerslagMember = !0)
+          : (t.dwfVerslagMember = !1);
+        let d = !1;
+        for (let e = 0; e < c; e++) {
+          const a = u[e];
+          if (t.clubThuisGUID === a || t.clubUitGUID === a) {
+            d = !0;
+            break;
+          }
+        }
+        if (!d) {
+          if (t.dwfVerslagMember) return !0;
+          if (
+            (a &&
+              n.wqAlert(
+                "Niet aangesloten bij thuis of uitclub van deze wedstrijd!"
+              ),
+            "BVBL57508" !== (r = i.getRelguid()) &&
+              "BVBL185889" !== r &&
+              "BVBL183253" !== r)
+          )
+            return !1;
+        }
+        return !0;
+      });
+  },
+]);
+
+("use strict");
+sportModule.controller("MasterViewController", [
+  "$rootScope",
+  "$scope",
+  "WQData",
+  function (e, t, n) {
+    const a = n.getUsername();
+    (e.sportModuleBaseUrl = sportModuleBaseUrl),
+      (e.sportModuleSboServerUrl = sportModuleSboServerUrl),
+      (e.dwfUrl = dwfUrl),
+      (e.dwfUrlBeta = dwfUrlBeta),
+      (e.sportModuleMetDigMut = sportModuleMetDigMut),
+      (e.sportModuleClubLogoUrlPrefix = sportModuleClubLogoUrlPrefix),
+      (e.sportModuleClubLogoUrlPrefix = sportModuleClubLogoUrlPrefix),
+      (e.isConfirm = !1),
+      (t.init = function (r) {
+        if ((n.setUrlSboServer(e.sportModuleSboServerUrl), n.loggedIn()))
+          e.language = n.getLanguage();
+        else {
+          const t = navigator.language || navigator.userLanguage;
+          null === t || "fr" !== t.substring(0, 1).toLowerCase()
+            ? (e.language = "nl")
+            : (e.language = "fr");
+        }
+        "fr" === e.language
+          ? ((e.resCode = "Code"),
+            (e.resDatum = "Date"),
+            (e.resTijd = "Heure"),
+            (e.resThuis = "Visité"),
+            (e.resUitslag = "Résultat"),
+            (e.resUit = "Visiteur"),
+            (e.resReeks = "Série"),
+            (e.resAccommodatie = "Salle"),
+            (e.resSporthal = "Salle"),
+            (e.resGebruikersnaam = "Nom d'utilisateur"),
+            (e.resWachtwoord = "Mot de passe"),
+            (e.resLidnummer = "Numéro de membre"),
+            (e.resOpslaan = "Valider"),
+            (e.resCancel = "Annuler"),
+            (e.resEmailOnjuist = "E-mail invalide"),
+            (e.resGeboortedatum = "Date de naissance"),
+            (e.resGeslacht = "Sexe"))
+          : ((e.resCode = "Code"),
+            (e.resDatum = "Datum"),
+            (e.resTijd = "Tijd"),
+            (e.resThuis = "Thuis"),
+            (e.resUitslag = "Uitslag"),
+            (e.resUit = "Uit"),
+            (e.resReeks = "Reeks"),
+            (e.resAccommodatie = "Accommodatie"),
+            (e.resSporthal = "Sporthal"),
+            (e.resGebruikersnaam = "Gebruikersnaam"),
+            (e.resWachtwoord = "Wachtwoord"),
+            (e.resLidnummer = "Lidnummer"),
+            (e.resOpslaan = "Opslaan"),
+            (e.resCancel = "Cancel"),
+            (e.resEmailOnjuist = "Ongeldig e-mailadres"),
+            (e.resGeboortedatum = "Geboortedatum"),
+            (e.resGeslacht = "Geslacht")),
+          "Login" === r && n.setAutheader("na"),
+          (t.showOfficialItem = !1),
+          (t.showBestuurItem1 = !1),
+          (t.showBestuurItem2 = !1),
+          (t.showKalplanItem1 = !1),
+          (t.showKalplanItem2 = !1),
+          (t.showKalplanItem3 = !1),
+          (t.showFavIcon = !1),
+          (t.showfavorieten = !0),
+          (t.showTab = !1),
+          n.setLastVisitMenuId(r);
+        const o = n.getAutheader();
+        if (null === o || "na" === o)
+          ("MenuOfficialId" != r &&
+            "MenuBestuurId1" !== r &&
+            "MenuBestuurId2" !== r &&
+            "MenuBestuurId3" !== r &&
+            "MenuKalPlanId1" !== r &&
+            "MenuKalPlanId2" !== r &&
+            "MenuKalPlanId3" !== r) ||
+            (window.location = "../Home/Login");
+        else {
+          t.showfavorieten = !0;
+          const o = document.querySelector("#MenuLoginId"),
+            u = document.querySelector("#MenuFavorietenId"),
+            l = n.getRollen(),
+            s = "Bestuur";
+          let c = 0,
+            i = 0,
+            d = null;
+          angular.forEach(l, function (n, a) {
+            if (n.AccountRolType === s) {
+              let a;
+              1 === ++c &&
+                (((a = document.getElementById("MenuBestuurId1")).innerText =
+                  n.Name),
+                (t.accountGUIDPage = n.guid + n.Name),
+                (e.accountGUIDPageR = n.guid + n.Name),
+                (t.showBestuurItem1 = !0),
+                "MenuBestuurId1" === r && (d = n)),
+                2 === c &&
+                  (((a = document.getElementById("MenuBestuurId2")).innerText =
+                    n.Name),
+                  (t.accountGUIDPage = n.guid + n.Name),
+                  (e.accountGUIDPageR = n.guid + n.Name),
+                  (t.showBestuurItem2 = !0),
+                  "MenuBestuurId2" === r && (d = n)),
+                3 === c &&
+                  (((a = document.getElementById("MenuBestuurId3")).innerText =
+                    n.Name),
+                  (t.accountGUIDPage = n.guid + n.Name),
+                  (e.accountGUIDPageR = n.guid + n.Name),
+                  (t.showBestuurItem3 = !0),
+                  "MenuBestuurId3" === r && (d = n));
+            }
+            ("Official" === n.AccountRolType &&
+              ((t.showOfficialItem = !0), "MenuOfficialId" === r && (d = n)),
+            "KalPlan" === n.AccountRolType) &&
+              (1 === ++i &&
+                ((document.getElementById("MenuKalPlanId1").innerText = n.Name),
+                (t.accountGUIDPage = n.guid + n.Name),
+                (e.accountGUIDPageR = n.guid + n.Name),
+                (t.showKalplanItem1 = !0),
+                "MenuKalPlanId1" === r && (d = n)),
+              2 === i &&
+                ((document.getElementById("MenuKalPlanId2").innerText = n.Name),
+                (t.accountGUIDPage = n.guid + n.Name),
+                (e.accountGUIDPageR = n.guid + n.Name),
+                (t.showKalplanItem2 = !0),
+                "MenuKalPlanId2" === r && (d = n)),
+              3 === i &&
+                ((document.getElementById("MenuKalPlanId3").innerText = n.Name),
+                (t.accountGUIDPage = n.guid + n.Name),
+                (e.accountGUIDPageR = n.guid + n.Name),
+                (t.showKalplanItem3 = !0),
+                "MenuKalPlanId3" === r && (d = n)));
+          }),
+            (u.innerText = "Mijn info"),
+            $("#elemFavorieten").attr("class", "ng-show"),
+            ((e) => {
+              const t = e
+                .toLocaleUpperCase()
+                .split(" ")
+                .map((e) => e[0])
+                .join("");
+              o.innerHTML = `<span class= loggedin><h3 class='white'>${t}</h3>\n                  </span>`;
+            })(a),
+            $("#MenuLoginId").append(),
+            ("MenuOfficialId" !== r &&
+              "MenuBestuurId1" !== r &&
+              "MenuBestuurId2" !== r &&
+              "MenuBestuurId3" !== r &&
+              "MenuKalPlanId1" !== r &&
+              "MenuKalPlanId2" !== r &&
+              "MenuKalPlanId3" !== r) ||
+              null !== d ||
+              (window.location = "/Home/Favorieten"),
+            n.setLastExtraAccountInfo(d),
+            (t.showFavIcon = !0);
+        }
+      });
+    const r = document.querySelector("#WQmodalVraag"),
+      o = document.querySelector("#WQVraagOverlay");
+    t.getScroll = function () {
+      null != window.pageYOffset &&
+        ((r.style.top = pageYOffset + 200 + "px"),
+        (o.style.top = pageYOffset + "px"));
+    };
+    const u = document.querySelector("#WQvraagCloseBtn"),
+      l = document.querySelector("#wqVraagBtnCancel"),
+      s = document.querySelector("#wqVraagBtn1"),
+      c = document.querySelector("#wqVraagBtn2"),
+      i = document.querySelector("#wqVraagBtn3"),
+      d = document.querySelector("#wqVraagBtn4");
+    let g = [];
+    const m = function () {
+      o.classList.add("WQhidden"), r.classList.add("WQhidden");
+    };
+    (e.wqVraag = function (n, a, w) {
+      if (
+        (g.forEach((e) => e.btn.removeEventListener(e.event, e.fn)),
+        (e.wqVraagBtnCancelShow = !1),
+        (e.wqVraagBtn1Show = !1),
+        (e.wqVraagBtn2Show = !1),
+        (e.wqVraagBtn3Show = !1),
+        (e.wqVraagBtn4Show = !1),
+        (e.modalHeader = n),
+        Array.isArray(a)
+          ? ((e.WqConfirmMMar = a), (e.modalContent = a[0]))
+          : ((e.WqConfirmMMar = [a]), (e.modalContent = a)),
+        u.addEventListener("click", m),
+        g.push({ btn: u, event: "click", fn: m }),
+        w.length > 0 &&
+          ((e.wqVraagBtnCancelText = "Cancel"),
+          l.addEventListener("click", m),
+          g.push({ btn: l, event: "click", fn: m }),
+          (e.wqVraagBtnCancelShow = !0)),
+        w.length > 0 &&
+          ((e.wqVraagBtn1Text = w[0].buttonText),
+          s.addEventListener("click", m),
+          g.push({ btn: s, event: "click", fn: m }),
+          s.addEventListener("click", w[0].func),
+          g.push({ btn: s, event: "click", fn: w[0].func }),
+          (e.wqVraagBtn1Show = !0)),
+        w.length > 1)
+      ) {
+        const t = w[1].func;
+        (e.wqVraagBtn2Text = w[1].buttonText),
+          c.addEventListener("click", m),
+          g.push({ btn: c, event: "click", fn: m }),
+          c.addEventListener("click", t),
+          g.push({ btn: c, event: "click", fn: t }),
+          (e.wqVraagBtn2Show = !0);
+      }
+      if (w.length > 2) {
+        e.wqVraagBtn3Text = w[2].buttonText;
+        const t = w[2].func;
+        i.addEventListener("click", t),
+          g.push({ btn: i, event: "click", fn: t }),
+          i.addEventListener("click", m),
+          g.push({ btn: i, event: "click", fn: m }),
+          (e.wqVraagBtn3Show = !0);
+      }
+      w.length > 3 &&
+        ((e.wqVraagBtn4Text = w[3].buttonText),
+        d.addEventListener("click", w[3].func),
+        g.push({ btn: d, event: "click", fn: w[3].func }),
+        d.addEventListener("click", m),
+        g.push({ btn: d, event: "click", fn: m }),
+        (e.wqVraagBtn4Show = !0)),
+        t.getScroll(),
+        o.classList.remove("WQhidden"),
+        r.classList.remove("WQhidden");
+    }),
+      (e.wqAlert = function (t, n) {
+        e.wqVraag(t, n, []);
+      }),
+      (e.wqConfirm = function (t, n, a) {
+        e.wqVraag(t, n, [a]);
+      });
+  },
+]);
+
+sportModule.factory("wqGlobal", function () {
+  const e = document.querySelector(".WQ-alert-modal"),
+    n = document.querySelector("#WQmodalInfo"),
+    o = document.querySelector(".WQoverlay"),
+    a = document.querySelectorAll(".WQclose-modal"),
+    t = document.querySelector(".WQmodal"),
+    r = document.querySelector(".WQ-voorwaarden-modal"),
+    d = document.querySelector(".WQshow-alert-modal"),
+    l = function (n) {
+      ("WQmodal" !== n && "WQmodal" !== n.value) || t.classList.add("WQhidden"),
+        "WQ-voorwaarden-modal" === n.value && r.classList.add("WQhidden"),
+        "WQ-alert-modal" === n.value && e.classList.add("WQhidden"),
+        "WQ-alert-modal in" === n.value && e.classList.add("WQhidden"),
+        o.classList.add("WQhidden");
+    };
+  document.addEventListener("keydown", function (e) {
+    "Escape" !== e.key || t.classList.contains("WQhidden") || l();
+  });
+  for (let e = 0; e < a.length; e++)
+    a[e].addEventListener("click", function (e) {
+      let n = e.target.parentNode.classList;
+      l(n);
+    });
+  d &&
+    d.addEventListener("click", function (a) {
+      e.classList.remove("WQhidden"),
+        o.classList.remove("WQhidden"),
+        "voorwaarden" === a.target.id &&
+          (n.innerText =
+            "Het lid verklaart kennis genomen te hebben van het mutatiereglement, het juridisch reglement en de verzekeringspolissen. Het intern reglement van Basketbal Vlaanderen kan ingezien worden op de Federale zetel (Ottergemsesteenweg Zuid 808-B Bus 12, 9000 Gent) en bij de Secretaris van de club waar u wenst aan te sluiten. De ondergetekende verklaren zich akkoord met het huishoudelijk reglement van Basketbal Vlaanderen. Iedere reglements- en secretariaatswijziging zal verschijnen op de website (www.basketbal.vlaanderen).");
+    }),
+    window.addEventListener("scroll", function () {
+      const e = document.querySelector(".WQ-alert-modal");
+      var n =
+          window.pageYOffset ||
+          document.documentElement.scrollTop ||
+          document.body.scrollTop ||
+          0,
+        o = n > 0 ? n + "px" : 0;
+      e.style.marginTop = o;
+    }),
+    document.addEventListener("keydown", function (e) {
+      "Escape" !== e.key || t.classList.contains("WQhidden") || l();
+    });
+  for (let e = 0; e < a.length; e++)
+    a[e].addEventListener("click", function (e) {
+      let n = e.target.parentNode.classList;
+      l(n);
+    });
+  return {
+    wqAlert: function (a) {
+      e.classList.remove("WQhidden"),
+        o.classList.remove("WQhidden"),
+        (n.innerText = a);
+    },
+    wqCloseModal: function (e) {
+      ("WQmodal" !== e && "WQmodal" !== e.value) || t.classList.add("WQhidden"),
+        o.classList.add("WQhidden");
+    },
+    setClubstyleSheet: function (e, n, o) {
+      const a = "rgba(2, 0, 36, 1)";
+      let t = "rgba(" + n + ")",
+        r = e,
+        d = `linear-gradient(45deg, ${a}, 20%, ${(r =
+          "#000000" === r ? "rgb(90 87 87)" : e)})`;
+      const l = `linear-gradient(to bottom right, ${a},30%, ${r})`,
+        i = new CSSStyleSheet();
+      i.replaceSync(
+        `.btn-primary-inverse{color:${r};border-color:${a}} .btn-primary:hover{background-color:${a};border-color:${r}} .vbl-orange{background-color:${r}} .panel-heading .accordion-toggle:after {background-color:${r}} .icon{fill:${r}}.badge{background-color:white;color:${e}}.glyphicon{color:white} .wqMessageBanner-orange{ background:${d}} .wqMessageBanner-blue{ background:${d}}.wqBanner-orange {color:white; background:${d}} a{color:black}.nav-tabs > li{background:${r}}.nav-tabs > li>a:hover{background:${d};border-right: 1px solid white;}.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover {background:${d};border-right: solid 1px white ; } .nav-tabs > li.active > a:focus{background-color:${e} ;color:white; border-right: solid 1px white ; }.nav-tabs > li > a {\n    margin-right: 0;\n    line-height: 1.3em;\n    border-left: none;\n    border-right: 1px solid white;\n    border-bottom: none;\n    border-top: none;\n    border-radius: 0 0 0 0;\n    color: #fff;\n    padding-left: 6px;\n    padding-right: 6px;\n    padding-top: 1.2em;\n    padding-bottom: 1.2em;\n    white-space: nowrap;\n}.glyphicon{color:${t}`
+      ),
+        ("#ffff00" !== e && "#ffffff" !== e) ||
+          i.replaceSync(
+            `h4.white{color:white} a.white{color:#ffffff} .wqBanner-orange {color:white; background:${d}}  a{color:black}.nav-tabs > li{background-color:${t}} .nav-tabs > li>a:hover{color:black;background:${d}}.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover {background-color:${t}} .nav-tabs > li.active > a:focus{background:${l};color:${e}; border: solid 2px ${t};}\n.nav-tabs > li > a {\n    margin-right: 0;\n    line-height: 1.3em;\n    border-left: none;\n    border-right: 1px solid ${e};\n    border-bottom: none;\n    border-top: none;\n    border-radius: 0 0 0 0;\n    color: #fff;\n    padding-left: 6px;\n    padding-right: 6px;\n    padding-top: 1.2em;\n    padding-bottom: 1.2em;\n    white-space: nowrap;\n}\n.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {\n    \n    border-right: 1px solid ${e};\n   \n    \n} .glyphicon{color:${t};`
+          ),
+        (document.adoptedStyleSheets = [i]);
+    },
+  };
+});

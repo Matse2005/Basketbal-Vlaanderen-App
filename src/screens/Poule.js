@@ -7,8 +7,10 @@ import {
   Platform,
   RefreshControl,
 } from "react-native";
+import { Icon } from "react-native-elements";
+import { checkFavorite, toggleFavorite } from "../logic/Favorites";
 
-function PouleScreen({ route }) {
+function PouleScreen({ route, navigation }) {
   const [refreshing, setRefreshing] = React.useState(false);
   const [isLoading, setLoading] = useState(true);
   const [data, setData] = useState([]);
@@ -29,12 +31,37 @@ function PouleScreen({ route }) {
     }
   };
 
+  const setIcon = async () => {
+    var favorite = null;
+
+    await checkFavorite(guid, "poule").then(function (favoriteState) {
+      favorite = favoriteState;
+    });
+
+    navigation.setOptions({
+      headerRight: () => (
+        <Icon
+          name={favorite ? "heart" : "heart-outline"}
+          type="ionicon"
+          onPress={() => {
+            toggleFavorite(guid, "poule").then(() => {
+              setIcon();
+            });
+          }}
+          color="#fb923c"
+        />
+      ),
+    });
+  };
+
   useEffect(() => {
+    setIcon();
     getPoule();
   }, []);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    getPoule();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -53,11 +80,11 @@ function PouleScreen({ route }) {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
           disableVirtualization={true}
-          className="w-full h-full mt-2"
+          className="h-full mt-2 "
           renderItem={({ item }) => (
             <View className="mt-2 space-y-4 ">
               <View className="flex flex-row items-center justify-between px-3 py-2 text-center bg-white rounded">
-                <View className="flex items-center justify-center w-full h-8 text-center">
+                <View className="flex items-center justify-center h-8 text-center">
                   <Text className="font-bold text-gray-500">{item.naam}</Text>
                 </View>
               </View>
@@ -77,7 +104,7 @@ function PouleScreen({ route }) {
                   </View>
                 </View>
               </View>
-              <View className="space-y-2">
+              <View className="mb-6 space-y-2">
                 {item.teams.map((team) => {
                   return (
                     <View

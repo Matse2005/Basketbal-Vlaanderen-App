@@ -12,6 +12,7 @@ import {
   Platform,
 } from "react-native";
 import { Icon, Image } from "react-native-elements";
+import { OpenGym } from "../../components/OpenGym";
 
 function ClubInfoScreen({ route, navigation }) {
   const [isLoading, setLoading] = useState(true);
@@ -42,6 +43,7 @@ function ClubInfoScreen({ route, navigation }) {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    getClub();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -52,7 +54,7 @@ function ClubInfoScreen({ route, navigation }) {
   };
 
   return (
-    <View className="w-full h-full px-3">
+    <View className="h-full px-3">
       {/* <View className="flex flex-row w-auto p-2 mx-3 mt-2 bg-white rounded-lg">
         <TouchableOpacity className="items-center justify-center w-1/2 px-3 py-2 text-center bg-orange-400 rounded">
           <Text className="text-base font-bold text-white">Info</Text>
@@ -82,26 +84,28 @@ function ClubInfoScreen({ route, navigation }) {
           disableVirtualization
           renderItem={({ item }) => (
             <View className="h-full space-y-4">
-              <View className="flex items-center flex-1 gap-1 px-5 py-4 text-center bg-white rounded">
-                <Image
-                  PlaceholderContent={<ActivityIndicator />}
-                  placeholderStyle={{ backgroundColor: "#fff" }}
-                  cachePolicy="memory"
-                  source={{
-                    uri:
-                      "https://vbl.wisseq.eu/vbldataOrganisation/BVBL" +
-                      item.guid.match(/\d+/g)[0] +
-                      ".jpg",
-                  }}
-                  resizeMode="contain"
-                  className="w-28 h-28"
-                />
-                <Text className="text-lg font-bold text-center text-gray-700">
-                  {item.naam}
-                </Text>
-                <Text className="text-center text-gray-500">
-                  Stamnummer {item.stamNr}
-                </Text>
+              <View className="px-5 py-4 bg-white rounded-lg">
+                <View className="flex items-center flex-1 gap-1 text-cwenter">
+                  <Image
+                    PlaceholderContent={<ActivityIndicator />}
+                    placeholderStyle={{ backgroundColor: "#fff" }}
+                    cachePolicy="memory"
+                    source={{
+                      uri:
+                        "https://vbl.wisseq.eu/vbldataOrganisation/BVBL" +
+                        item.guid.match(/\d+/g)[0] +
+                        ".jpg",
+                    }}
+                    resizeMode="contain"
+                    className="w-28 h-28"
+                  />
+                  <Text className="text-lg font-bold text-center text-gray-700">
+                    {item.naam}
+                  </Text>
+                  <Text className="text-center text-gray-500">
+                    Stamnummer {item.stamNr}
+                  </Text>
+                </View>
               </View>
               <View className="space-y-2">
                 <Text className="text-lg font-bold">Contactgegevens</Text>
@@ -170,46 +174,24 @@ function ClubInfoScreen({ route, navigation }) {
                   <Text className="text-gray-500">{item.plaats}</Text>
                 </View>
               </View>
-              <View className="">
+              <View className="mb-6 ">
                 <Text className="mb-2 text-lg font-bold">Sporthallen</Text>
 
                 {item.accomms.map((location, index) => {
                   return (
-                    <TouchableOpacity
-                      onPress={() => {
-                        toggleExpansion(index);
-                      }}
+                    <OpenGym
                       key={index}
-                      className="px-3 py-2 mb-2 bg-white rounded"
-                    >
-                      <View className="flex flex-row items-center justify-between ">
-                        <View className="items-center justify-center w-8 h-8 bg-gray-100 rounded">
-                          <Text className="items-center justify-center text-lg font-bold text-center text-gray-500">
-                            <Icon
-                              name="location"
-                              type="ionicon"
-                              className={
-                                Platform.OS == "ios" ? "mt-1.5" : "mt-0"
-                              }
-                              color="#6b7280"
-                              solid={true}
-                              size={21}
-                            />
-                          </Text>
-                        </View>
-                        <Text className="w-4/5 text-right text-gray-500 ">
-                          {location.naam}
-                        </Text>
-                      </View>
-
-                      {isExpanded != index ?? (
-                        <View className="mt-2">
-                          <Text className="text-white">
-                            More data goes here...
-                          </Text>
-                        </View>
-                      )}
-                    </TouchableOpacity>
+                      show={false}
+                      address={{
+                        name: location.naam,
+                        street: location.adres.straat,
+                        number: location.adres.huisNr,
+                        bus: location.adres.huisNrToev,
+                        postalcode: location.adres.postcode,
+                        city: location.adres.plaats,
+                        country: location.adres.land,
+                      }}
+                    />
                   );
                 })}
               </View>

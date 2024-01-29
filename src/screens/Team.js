@@ -10,6 +10,9 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import MatchesScreen from "./Team/Matches";
 import PlayersScreen from "./Team/Players";
 import PoulesScreen from "./Team/Poules";
+import { Icon } from "react-native-elements";
+import { checkFavorite, toggleFavorite } from "../logic/Favorites";
+import { useEffect } from "react";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -88,8 +91,35 @@ const Tab = createMaterialTopTabNavigator();
 //   );
 // }
 
-function TeamScreen({ route }) {
+function TeamScreen({ route, navigation }) {
   const { guid } = route.params;
+
+  const setIcon = async () => {
+    var favorite = null;
+
+    await checkFavorite(guid, "team").then(function (favoriteState) {
+      favorite = favoriteState;
+    });
+
+    navigation.setOptions({
+      headerRight: () => (
+        <Icon
+          name={favorite ? "heart" : "heart-outline"}
+          type="ionicon"
+          onPress={() => {
+            toggleFavorite(guid, "team").then(() => {
+              setIcon();
+            });
+          }}
+          color="#fb923c"
+        />
+      ),
+    });
+  };
+
+  useEffect(() => {
+    setIcon();
+  }, []);
 
   return (
     <Tab.Navigator
@@ -129,7 +159,7 @@ function TeamScreen({ route }) {
       <Tab.Screen
         name="Poules"
         component={PoulesScreen}
-        options={{ title: "Competities" }}
+        options={{ title: "Competitie" }}
         initialParams={{
           guid: guid,
         }}

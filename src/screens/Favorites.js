@@ -1,153 +1,54 @@
-// import "react-native-gesture-handler";
-import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Text,
+  Animated,
   View,
   TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
+  Dimensions,
+  Platform,
 } from "react-native";
-import { getFavorites, storeFavorites } from "../logic/Favorites";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
-function FavoritesScreen({ navigation }) {
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [isLoading, setLoading] = useState(true);
-  const [clubs, setClubs] = useState([]);
-  const [teams, setTeams] = useState([]);
-  var favorites = null;
+import FavoritesClubScreen from "./Favorites/Club";
+import FavoritesPouleScreen from "./Favorites/Poule";
+import FavoritesTeamScreen from "./Favorites/Team";
 
-  // Temporarly
-  var favoritesDefault = [
-    "club_BVBL1255",
-    "team_BVBL1171J21%20%201",
-    "team_BVBL1171HSE%20%202",
-    "team_BVBL1171DSE%20%201",
-    "team_BVBL1171HSE%20%201",
-    "team_BVBL1171J18%20%201",
-  ];
+const Tab = createMaterialTopTabNavigator();
 
-  storeFavorites(favoritesDefault);
-
-  const getTeams = async () => {
-    var items = [];
-    favorites == null ? (favorites = await getFavorites()) : null;
-
-    for (const favorite of favorites) {
-      if (favorite.split("_")[0] == "team") {
-        const response = await fetch(
-          "https://vblCB.wisseq.eu/VBLCB_WebService/data/TeamDetailByGuid?teamGuid=" +
-            favorite.split("_")[1]
-        );
-        const json = await response.json();
-        items.push(...json);
-      }
-    }
-
-    setTeams(items);
-  };
-
-  const getClubs = async () => {
-    var items = [];
-    favorites == null ? (favorites = await getFavorites()) : null;
-
-    for (const favorite of favorites) {
-      if (favorite.split("_")[0] == "club") {
-        try {
-          const response = await fetch(
-            "https://vblCB.wisseq.eu/VBLCB_WebService/data/OrgDetailByGuid?issguid=" +
-              favorite.split("_")[1]
-          );
-          const json = await response.json();
-          items.push(...json);
-        } catch (error) {
-          console.error(error);
-        } finally {
-          setLoading(false);
-        }
-      }
-    }
-
-    setClubs(items);
-  };
-
-  useEffect(() => {
-    try {
-      getClubs();
-      getTeams();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
-  }, []);
-
+function FavoritesScreen({ route, navigation }) {
   return (
-    <SafeAreaView className="w-full h-full">
-      <ScrollView className="w-full h-full px-3 py-2 mb-3">
-        <Text className="my-2 text-lg font-bold">Teams</Text>
-        {isLoading ? (
-          <ActivityIndicator />
-        ) : (
-          teams.map((team, index) => {
-            return (
-              <View className="mb-2" key={index}>
-                <TouchableOpacity
-                  className="box-border w-full p-5 bg-white rounded-lg "
-                  onPress={() => {
-                    navigation.navigate("Team", {
-                      guid: team.guid,
-                    });
-                  }}
-                >
-                  <View className="flex flex-row items-center justify-between w-full">
-                    <View className="justify-center flex-1 w-auto space-y-3">
-                      <Text className="font-bold text-gray-700">
-                        {team.naam}
-                      </Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            );
-          })
-        )}
-        <Text className="my-2 text-lg font-bold">Clubs</Text>
-        {isLoading ? (
-          <ActivityIndicator />
-        ) : (
-          clubs.map((club, index) => {
-            return (
-              <View className="mb-2" key={index}>
-                <TouchableOpacity
-                  className="box-border w-full p-5 bg-white rounded-lg "
-                  onPress={() => {
-                    navigation.navigate("Club", {
-                      guid: club.guid,
-                    });
-                  }}
-                >
-                  <View className="flex flex-row items-center justify-between w-full">
-                    <View className="justify-center flex-1 w-auto space-y-3">
-                      <Text className="font-bold text-gray-700">
-                        {club.naam}
-                      </Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            );
-          })
-        )}
-      </ScrollView>
-    </SafeAreaView>
+    <Tab.Navigator
+      indicatorStyle={{ backgroundColor: "#fb923c", height: 2 }}
+      screenOptions={{
+        tabBarLabelStyle: {
+          fontSize: 16,
+          fontWeight: 700,
+          textTransform: "none",
+        },
+        tabBarActiveTintColor: "#fb923c",
+        tabBarInactiveTintColor: "#374151",
+        tabBarItemStyle: {
+          borderRadius: 4,
+        },
+        tabBarStyle: {
+          backgroundColor: "white",
+        },
+      }}
+    >
+      <Tab.Screen
+        name="Teams"
+        component={FavoritesTeamScreen}
+        options={{ title: "Teams" }}
+      />
+      <Tab.Screen
+        name="Clubs"
+        component={FavoritesClubScreen}
+        options={{ title: "Clubs" }}
+      />
+      <Tab.Screen
+        name="Poules"
+        component={FavoritesPouleScreen}
+        options={{ title: "Competities" }}
+      />
+    </Tab.Navigator>
   );
 }
 

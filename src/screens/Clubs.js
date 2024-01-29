@@ -36,9 +36,9 @@ function ClubsScreen({ navigation }) {
           guid: item.guid,
         });
       }}
-      className="w-full "
+      className=""
     >
-      <View className="w-full p-5 my-1 text-sm bg-white rounded-lg items-left">
+      <View className="p-5 my-1 text-sm bg-white rounded-lg  items-left">
         {/* <Image
           PlaceholderContent={<ActivityIndicator />}
           placeholderStyle={{ backgroundColor: "#fff" }}
@@ -77,15 +77,15 @@ function ClubsScreen({ navigation }) {
   }, []);
 
   return (
-    <View className="flex-1 w-full px-3">
-      <View className="relative w-full">
+    <View className="flex-1 px-3">
+      <View className="relative ">
         <View className="absolute z-10 flex items-center justify-center top-5 left-5">
           <Icon name="search" type="octicons" className="" />
         </View>
         <TextInput
           placeholderTextColor="black"
           placeholder="Zoek..."
-          className="block w-full py-3 pl-12 pr-5 my-2 text-sm bg-white rounded-lg z-9"
+          className="block py-3 pl-12 pr-5 my-2 text-sm bg-white rounded-lg z-9"
           value={searchText}
           onChangeText={(text) => searchFunction(text)}
         />
@@ -98,7 +98,7 @@ function ClubsScreen({ navigation }) {
           keyExtractor={({ guid }) => guid}
           showsVerticalScrollIndicator={false}
           disableVirtualization={true}
-          className="w-full mt-2"
+          className="mt-2 "
           renderItem={renderItem}
         ></FlatList>
       )}

@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { Icon, Image } from "react-native-elements";
 import GameComponent from "../../components/GameComponent";
+import { NoDataComponent } from "../../components/NoData";
 
 function TeamPoulesScreen({ route, navigation }) {
   const [isLoading, setLoading] = useState(true);
@@ -44,13 +45,14 @@ function TeamPoulesScreen({ route, navigation }) {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    getClub();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
 
   return (
-    <View className="w-full h-full px-3">
+    <View className="h-full px-3 ">
       {isLoading ? (
         <ActivityIndicator />
       ) : (
@@ -75,49 +77,55 @@ function TeamPoulesScreen({ route, navigation }) {
                     }
                   >
                     <Text className="text-lg font-bold">Competities</Text>
-                    <View className="mt-2 mb-4">
-                      {team.poules.map((poule) => (
-                        <TouchableOpacity
-                          key={poule.guid}
-                          onPress={() => {
-                            navigation.navigate("Poule", {
-                              guid: poule.guid,
-                            });
-                          }}
-                          className="flex flex-row items-center justify-between px-3 py-2 mb-2 bg-white rounded"
-                        >
-                          <View className="items-center justify-center w-8 h-8 bg-gray-100 rounded">
-                            <Text className="items-center justify-center text-lg font-bold text-center text-gray-500">
-                              {poule.naam.toLowerCase().includes("beker") ? (
-                                <Icon
-                                  name="trophy"
-                                  type="ionicon"
-                                  className={
-                                    Platform.OS == "ios" ? "mt-1.5" : "mt-0"
-                                  }
-                                  color="#6b7280"
-                                  solid={true}
-                                  size={19}
-                                />
-                              ) : (
-                                <Icon
-                                  name="basketball"
-                                  type="ionicon"
-                                  className={
-                                    Platform.OS == "ios" ? "mt-1.5" : "mt-0"
-                                  }
-                                  color="#6b7280"
-                                  solid={true}
-                                  size={19}
-                                />
-                              )}
+                    <View className="mt-2 mb-6">
+                      {team.poules && team.poules.length > 0 ? (
+                        team.poules.map((poule) => (
+                          <TouchableOpacity
+                            key={poule.guid}
+                            onPress={() => {
+                              navigation.navigate("Poule", {
+                                guid: poule.guid,
+                              });
+                            }}
+                            className="flex flex-row items-center justify-between px-3 py-2 mb-2 bg-white rounded"
+                          >
+                            <View className="items-center justify-center w-8 h-8 bg-gray-100 rounded">
+                              <Text className="items-center justify-center text-lg font-bold text-center text-gray-500">
+                                {poule.naam.toLowerCase().includes("beker") ? (
+                                  <Icon
+                                    name="trophy"
+                                    type="ionicon"
+                                    className={
+                                      Platform.OS == "ios" ? "mt-1.5" : "mt-0"
+                                    }
+                                    color="#6b7280"
+                                    solid={true}
+                                    size={19}
+                                  />
+                                ) : (
+                                  <Icon
+                                    name="basketball"
+                                    type="ionicon"
+                                    className={
+                                      Platform.OS == "ios" ? "mt-1.5" : "mt-0"
+                                    }
+                                    color="#6b7280"
+                                    solid={true}
+                                    size={19}
+                                  />
+                                )}
+                              </Text>
+                            </View>
+                            <Text className="flex-wrap w-4/5 text-right text-gray-500">
+                              {poule.naam}
                             </Text>
-                          </View>
-                          <Text className="flex-wrap w-4/5 text-right text-gray-500">
-                            {poule.naam}
-                          </Text>
-                        </TouchableOpacity>
-                      ))}
+                          </TouchableOpacity>
+                        ))
+                      ) : (
+                        <View className="flex items-center justify-center rounded-lg">
+                          <NoDataComponent />
+                        </View>
+                      )}
                     </View>
                   </ScrollView>
                 </View>

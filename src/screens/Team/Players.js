@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import { Icon, Image } from "react-native-elements";
 import GameComponent from "../../components/GameComponent";
+import { NoDataComponent } from "../../components/NoData";
 
 function TeamPoulesScreen({ route, navigation }) {
   const [isLoading, setLoading] = useState(true);
@@ -44,13 +45,14 @@ function TeamPoulesScreen({ route, navigation }) {
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
+    getClub();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
   }, []);
 
   return (
-    <View className="w-full h-full px-3">
+    <View className="h-full px-3 ">
       {isLoading ? (
         <ActivityIndicator />
       ) : (
@@ -76,51 +78,63 @@ function TeamPoulesScreen({ route, navigation }) {
                   >
                     <Text className="text-lg font-bold">Spelers</Text>
                     <View className="mt-2 mb-4">
-                      {team.spelers.map((speler) => (
-                        <View
-                          key={speler.lidNr}
-                          // onPress={() => {
-                          //   navigation.navigate("Poule", {
-                          //     guid: poule.guid,
-                          //   });
-                          // }}
-                          className="flex flex-row items-center justify-between px-3 py-2 mb-2 bg-white rounded"
-                        >
-                          <Text className="flex-wrap w-3/5 text-left text-gray-500">
-                            {speler.naam}
-                          </Text>
-                          <View className="items-center justify-center h-8 px-3 bg-gray-100 rounded">
-                            <Text className="items-center justify-center font-bold text-center text-gray-500">
-                              {speler.sGebDat}
+                      {team.spelers && team.spelers.length > 0 ? (
+                        team.spelers.map((speler) => (
+                          <View
+                            key={speler.lidNr}
+                            // onPress={() => {
+                            //   navigation.navigate("Poule", {
+                            //     guid: poule.guid,
+                            //   });
+                            // }}
+                            className="flex flex-row items-center justify-between px-3 py-2 mb-2 bg-white rounded"
+                          >
+                            <Text className="flex-wrap w-3/5 text-left text-gray-500">
+                              {speler.naam}
                             </Text>
+                            <View className="items-center justify-center h-8 px-3 bg-gray-100 rounded">
+                              <Text className="items-center justify-center font-bold text-center text-gray-500">
+                                {speler.sGebDat}
+                              </Text>
+                            </View>
                           </View>
+                        ))
+                      ) : (
+                        <View className="flex items-center justify-center rounded-lg">
+                          <NoDataComponent />
                         </View>
-                      ))}
+                      )}
                     </View>
                     <Text className="text-lg font-bold">
                       Technische Vergunningen
                     </Text>
-                    <View className="mt-2 mb-4">
-                      {team.tvlijst.map((tv) => (
-                        <View
-                          key={tv.lidNr}
-                          // onPress={() => {
-                          //   navigation.navigate("Poule", {
-                          //     guid: poule.guid,
-                          //   });
-                          // }}
-                          className="flex flex-row items-center justify-between px-3 py-2 mb-2 bg-white rounded"
-                        >
-                          <Text className="flex-wrap w-3/5 text-left text-gray-500">
-                            {tv.naam}
-                          </Text>
-                          <View className="items-center justify-center h-8 px-3 bg-gray-100 rounded">
-                            <Text className="items-center justify-center font-bold text-center text-gray-500">
-                              {tv.tvCaC}
+                    <View className="mt-2 mb-6">
+                      {team.tvlijst && team.tvlijst.length > 0 ? (
+                        team.tvlijst.map((tv) => (
+                          <View
+                            key={tv.lidNr}
+                            // onPress={() => {
+                            //   navigation.navigate("Poule", {
+                            //     guid: poule.guid,
+                            //   });
+                            // }}
+                            className="flex flex-row items-center justify-between px-3 py-2 mb-2 bg-white rounded"
+                          >
+                            <Text className="flex-wrap w-3/5 text-left text-gray-500">
+                              {tv.naam}
                             </Text>
+                            <View className="items-center justify-center h-8 px-3 bg-gray-100 rounded">
+                              <Text className="items-center justify-center font-bold text-center text-gray-500">
+                                {tv.tvCaC}
+                              </Text>
+                            </View>
                           </View>
+                        ))
+                      ) : (
+                        <View className="flex items-center justify-center rounded-lg">
+                          <NoDataComponent />
                         </View>
-                      ))}
+                      )}
                     </View>
                   </ScrollView>
                 </View>

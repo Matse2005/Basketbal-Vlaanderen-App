@@ -4,21 +4,24 @@
     "slug": "basketbal-vlaanderen",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/app/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/app/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "be.matsevh.basketbal.vlaanderen"
+      "bundleIdentifier": "be.matsevh.basketbal.vlaanderen",
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": ["waze"]
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/app/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "be.matsevh.basketbal.vlaanderen"
@@ -37,6 +40,9 @@
     },
     "updates": {
       "url": "https://u.expo.dev/9c2d5474-3e15-46be-981c-43c0d2fa9f40"
+    },
+    "expo": {
+      "scheme": "bbvl"
     }
   }
 }
