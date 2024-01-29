@@ -6,5 +6,9 @@
   {
     "title": "Data updates",
     "description": "Getoonde data wordt niet altijd geupdate wanneer je de pagina herlaad (Hangt samen met de favoriete updates)."
+  },
+  {
+    "title": "Geen data",
+    "description": "Nog niet bij alle componenten is er een extra component toegevoegd zal worden als er geen data beschikbaar is om weer te geven waardoor er foutmeldingen kunnen verschijnen."
   }
 ]
