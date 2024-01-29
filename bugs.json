@@ -12,8 +12,8 @@
     "description": "Nog niet bij alle componenten is er een extra component toegevoegd zal worden als er geen data beschikbaar is om weer te geven waardoor er foutmeldingen kunnen verschijnen."
   },
   {
-    "title": "Match opent automatisch",
-    "description": "Bij het scrollen door de wedstrijden op de start pagina, opent er soms een match.",
-    "temp_solution": "Door te scroll op het component dat de datum weergeeft wordt het match component niet geactiveerd."
+    "title": "Wedstrijd opent automatisch",
+    "description": "Bij het scrollen door de wedstrijden op de start pagina, opent er soms een wedstrijd.",
+    "temp_solution": "Door te scroll op het component dat de datum weergeeft wordt het wedstrijd component niet geactiveerd."
   }
 ]
