@@ -4,16 +4,19 @@ import {
   ActivityIndicator,
   Text,
   View,
-  TouchableOpacity,
+  // TouchableOpacity,
   Pressable,
 } from "react-native";
 import { Icon, Image } from "react-native-elements";
 import GameCardComponent from "./GameCardComponent";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 function GameComponent({ game, navigation }) {
   return (
     // <Text>{game.thuis.naam}</Text>
-    <Pressable
+    <TouchableOpacity
+      // delayPressIn={1000}
+      // delayPressIn={}
       className="p-0"
       onPress={() => {
         navigation.navigate("Match", {
@@ -22,7 +25,7 @@ function GameComponent({ game, navigation }) {
       }}
     >
       <GameCardComponent game={game} />
-    </Pressable>
+    </TouchableOpacity>
   );
 }
 

@@ -16,6 +16,7 @@ import PouleScreen from "./src/screens/Poule";
 import ClubScreen from "./src/screens/Club";
 import TeamScreen from "./src/screens/Team";
 import BugsScreen from "./src/screens/Bugs";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // SplashScree.preventAutoHideAsync();
 
@@ -115,72 +116,74 @@ const Stack = createNativeStackNavigator();
 
 function App() {
   return (
-    <NavigationContainer>
-      <StatusBar
-        animated={true}
-        barStyle="dark-content"
-        showHideTransition="fade"
-      />
-      <ActionSheetProvider>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="Home"
-            component={Home}
-            // headerTintColor="#fb923c"
-            options={{
-              title: "",
-              headerBackVisible: false,
-              headerShown: false,
-              gestureEnabled: false,
-            }}
-            initialParams={{
-              givenDate: null,
-            }}
-          />
-          <Stack.Screen
-            name="Club"
-            component={ClubScreen}
-            options={{ title: "Club" }}
-            initialParams={{
-              guid: null,
-            }}
-          />
-          <Stack.Screen
-            name="Team"
-            component={TeamScreen}
-            options={{
-              title: "Team",
-              // headerRight: () => (
-              //   <Button
-              //     onPress={() => alert("This is a button!")}
-              //     title="Info"
-              //     color="#fff"
-              //   />
-              // ),
-            }}
-            initialParams={{
-              guid: null,
-            }}
-          />
-          <Stack.Screen
-            name="Match"
-            component={MatchScreen}
-            options={{ title: "Match" }}
-            initialParams={{
-              guid: null,
-            }}
-          />
-          <Stack.Screen
-            name="Poule"
-            component={PouleScreen}
-            options={{ title: "Rangschikking" }}
-            initialParams={{
-              guid: null,
-            }}
-          />
-        </Stack.Navigator>
-      </ActionSheetProvider>
-    </NavigationContainer>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <NavigationContainer>
+        <StatusBar
+          animated={true}
+          barStyle="dark-content"
+          showHideTransition="fade"
+        />
+        <ActionSheetProvider>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="Home"
+              component={Home}
+              // headerTintColor="#fb923c"
+              options={{
+                title: "",
+                headerBackVisible: false,
+                headerShown: false,
+                gestureEnabled: false,
+              }}
+              initialParams={{
+                givenDate: null,
+              }}
+            />
+            <Stack.Screen
+              name="Club"
+              component={ClubScreen}
+              options={{ title: "Club" }}
+              initialParams={{
+                guid: null,
+              }}
+            />
+            <Stack.Screen
+              name="Team"
+              component={TeamScreen}
+              options={{
+                title: "Team",
+                // headerRight: () => (
+                //   <Button
+                //     onPress={() => alert("This is a button!")}
+                //     title="Info"
+                //     color="#fff"
+                //   />
+                // ),
+              }}
+              initialParams={{
+                guid: null,
+              }}
+            />
+            <Stack.Screen
+              name="Match"
+              component={MatchScreen}
+              options={{ title: "Match" }}
+              initialParams={{
+                guid: null,
+              }}
+            />
+            <Stack.Screen
+              name="Poule"
+              component={PouleScreen}
+              options={{ title: "Rangschikking" }}
+              initialParams={{
+                guid: null,
+              }}
+            />
+          </Stack.Navigator>
+        </ActionSheetProvider>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
 

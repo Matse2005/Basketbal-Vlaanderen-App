@@ -1,6 +1,6 @@
 {
   "name": "mobileapp",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "main": "node_modules/expo/AppEntry.js",
   "repository": "https://github.com/matse2005/Basketbal-Vlaanderen-App",
   "scripts": {

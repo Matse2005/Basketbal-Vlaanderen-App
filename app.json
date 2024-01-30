@@ -2,7 +2,7 @@
   "expo": {
     "name": "Basketbal Vlaanderen",
     "slug": "basketbal-vlaanderen",
-    "version": "1.0.0",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/app/icon.png",
     "userInterfaceStyle": "light",
@@ -25,6 +25,7 @@
         "foregroundImage": "./assets/app/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
+      "versionCode": "1",
       "package": "be.matsevh.basketbal.vlaanderen"
     },
     "web": {

@@ -11,7 +11,8 @@ import {
   Linking,
   Platform,
 } from "react-native";
-import { Icon, Image } from "react-native-elements";
+import { Icon } from "react-native-elements";
+import { Image } from "expo-image";
 
 function ClubTeamsScreen({ route, navigation }) {
   const [isLoading, setLoading] = useState(true);
@@ -84,14 +85,14 @@ function ClubTeamsScreen({ route, navigation }) {
                   <Image
                     PlaceholderContent={<ActivityIndicator />}
                     placeholderStyle={{ backgroundColor: "#fff" }}
-                    cachePolicy="memory"
+                    cachePolicy="disk"
                     source={{
                       uri:
                         "https://vbl.wisseq.eu/vbldataOrganisation/BVBL" +
                         item.guid.match(/\d+/g)[0] +
                         ".jpg",
                     }}
-                    resizeMode="contain"
+                    contentFit="contain"
                     className="w-28 h-28"
                   />
                   <Text className="text-lg font-bold text-center text-gray-700">
