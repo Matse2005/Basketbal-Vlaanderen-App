@@ -1,21 +1,27 @@
 [
   {
+    "status": "Work In Progress",
     "title": "Wedstrijden scherm",
-    "description": "Het wedstrijden scherm heeft nog heel wat problemen, er te snel door scrollen zorgt ervoor dat deze gek begint te doen en daardoor de app niet meer werkt. Op deze moment is het nog aangeraden om niet teveel teams, clubs en competities aan je favoriete toe tevoegen om problemen te voorkomen."
+    "description": "Het wedstrijden scherm heeft nog heel wat problemen, er te snel door scrollen zorgt ervoor dat deze gek begint te doen en daardoor de app niet meer werkt.",
+    "temp_solution": "Niet te veel teams, ploegen of competities toevoegen aan je favoriete waardoor en minder data moet ingeladen worden"
   },
   {
+    "status": "Afwachtend",
     "title": "Favoriete updates",
     "description": "Wanneer je een club, team of competitie toegevoegd hebt of verwijderd hebt uit je favoriete wordt de data niet geupdate. Je moet de app opnieuw opstarten na elke verandering"
   },
   {
+    "status": "Afwachtend",
     "title": "Data updates",
     "description": "Getoonde data wordt niet altijd geupdate wanneer je de pagina herlaad (Hangt samen met de favoriete updates)."
   },
   {
+    "status": "Afwachtend",
     "title": "Geen data",
     "description": "Nog niet bij alle componenten is er een extra component toegevoegd zal worden als er geen data beschikbaar is om weer te geven waardoor er foutmeldingen kunnen verschijnen."
   },
   {
+    "status": "Opgelost",
     "title": "Wedstrijd opent automatisch",
     "description": "Bij het scrollen door de wedstrijden op de start pagina, opent er soms een wedstrijd.",
     "temp_solution": "Door te scroll op het component dat de datum weergeeft wordt het wedstrijd component niet geactiveerd."
