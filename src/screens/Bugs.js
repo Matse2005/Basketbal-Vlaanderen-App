@@ -19,10 +19,35 @@ function BugsScreen({ navigation }) {
     return (
       <View className="">
         <View className="p-5 my-1 bg-white rounded-lg items-left">
-          <Text className="text-sm font-bold">{bug.title}</Text>
-          <Text className="text-sm">{bug.description}</Text>
+          {bug.status ? (
+            <Text className="mt-1 text-xs italic">{bug.status}</Text>
+          ) : null}
+          <Text
+            className={
+              bug.status && bug.status == "Opgelost"
+                ? "text-sm font-bold line-through"
+                : "text-sm font-bold"
+            }
+          >
+            {bug.title}
+          </Text>
+          <Text
+            className={
+              bug.status && bug.status == "Opgelost"
+                ? "text-sm line-through"
+                : "text-sm"
+            }
+          >
+            {bug.description}
+          </Text>
           {bug.temp_solution ? (
-            <Text className="mt-1 text-xs italic">
+            <Text
+              className={
+                bug.status && bug.status == "Opgelost"
+                  ? "mt-1 text-xs italic line-through"
+                  : "mt-1 text-xs italic"
+              }
+            >
               Tijdelijke oplossing: {bug.temp_solution}
             </Text>
           ) : null}
