@@ -6,6 +6,17 @@
     "temp_solution": "Niet te veel teams, clubs of competities toevoegen aan je favoriete waardoor en minder data moet ingeladen worden. Of gewoon niet te snel scrollen 🤣"
   },
   {
+    "status": "Opgelost",
+    "title": "Favoriete updates",
+    "description": "Wanneer je een club, team of competitie toegevoegd hebt of verwijderd hebt uit je favoriete wordt de data niet geupdate op het favoriete scherm.",
+    "temp_solution": "Door de data te refreshen worden de favoriete nu bijgewerkt."
+  },
+  {
+    "status": "Work In Progress",
+    "title": "Favoriete updates",
+    "description": "Wanneer je een club, team of competitie toegevoegd hebt of verwijderd hebt uit je favoriete wordt de data niet geupdate op het wedstrijden scherm."
+  },
+  {
     "status": "Afwachtend",
     "title": "Favoriete updates",
     "description": "Wanneer je een club, team of competitie toegevoegd hebt of verwijderd hebt uit je favoriete wordt de data niet geupdate. Je moet de app opnieuw opstarten na elke verandering"
