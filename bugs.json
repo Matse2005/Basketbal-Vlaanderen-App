@@ -18,7 +18,7 @@
     "temp_solution": "Er zal op het scherm getoond worden om de app te herladen als de favoriete gewijzigd zijn, de app is nog volledig te gebruiken maar de data is niet up to date."
   },
   {
-    "status": "Afwachtend",
+    "status": "Testen, lijkt opgelost",
     "title": "Data updates",
     "description": "Getoonde data wordt niet altijd geupdate wanneer je de pagina herlaad (Hangt samen met de favoriete updates)."
   },
