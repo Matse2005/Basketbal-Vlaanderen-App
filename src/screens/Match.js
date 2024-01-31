@@ -11,6 +11,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Icon } from "react-native-elements";
 import GameCardComponent from "../components/GameCardComponent";
 import { OpenGym } from "../components/OpenGym";
+import { NoDataComponent } from "../components/NoData";
 
 function MatchScreen({ route, navigation }) {
   const [refreshing, setRefreshing] = React.useState(false);
@@ -52,8 +53,10 @@ function MatchScreen({ route, navigation }) {
       ) : (
         <FlatList
           data={data}
+          extraData={data}
           keyExtractor={(item) => item.doc.guid}
           showsVerticalScrollIndicator={false}
+          ListEmptyComponent={<NoDataComponent />}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }

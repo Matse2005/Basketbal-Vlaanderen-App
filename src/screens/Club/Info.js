@@ -13,6 +13,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Icon } from "react-native-elements";
 import { OpenGym } from "../../components/OpenGym";
 import { Image } from "expo-image";
+import { NoDataComponent } from "../../components/NoData";
 
 function ClubInfoScreen({ route, navigation }) {
   const [isLoading, setLoading] = useState(true);
@@ -74,6 +75,8 @@ function ClubInfoScreen({ route, navigation }) {
         <FlatList
           className="h-full mt-2"
           data={data}
+          ListEmptyComponent={<NoDataComponent />}
+          extraData={data}
           showsVerticalScrollIndicator={false}
           keyExtractor={({ guid }) => guid}
           refreshControl={

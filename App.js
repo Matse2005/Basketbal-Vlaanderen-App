@@ -17,8 +17,11 @@ import ClubScreen from "./src/screens/Club";
 import TeamScreen from "./src/screens/Team";
 import BugsScreen from "./src/screens/Bugs";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import "./Global";
 
 // SplashScree.preventAutoHideAsync();
+
+global.isUpdated = false;
 
 const Tab = createBottomTabNavigator();
 
@@ -30,6 +33,8 @@ function Home() {
         activeTintColor: "#fb923c",
         tabBarActiveTintColor: "#fb923c",
         animationEnabled: false,
+        tabBarStyle: { height: 60 },
+        tabBarLabelStyle: { marginBottom: 10 },
       }}
     >
       <Tab.Screen
@@ -124,7 +129,12 @@ function App() {
           showHideTransition="fade"
         />
         <ActionSheetProvider>
-          <Stack.Navigator>
+          <Stack.Navigator
+            screenOptions={{
+              headerTintColor: "#fb923c",
+              headerTitleStyle: { color: "black" },
+            }}
+          >
             <Stack.Screen
               name="Home"
               component={Home}
@@ -134,6 +144,7 @@ function App() {
                 headerBackVisible: false,
                 headerShown: false,
                 gestureEnabled: false,
+                headerTintColor: "#fb923c",
               }}
               initialParams={{
                 givenDate: null,

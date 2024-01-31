@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
+import "../../Global";
 
 const message = (type, typeCase = "capitilize", length = "short") => {
   switch (type) {
@@ -36,6 +37,7 @@ const checkFavorite = async (guid, type) => {
 const toggleFavorite = async (guid, type) => {
   if (!(await checkFavorite(guid, type))) await addFavorite(guid, type);
   else await removeFavorite(guid, type);
+  global.isUpdated = true;
 };
 
 const addFavorite = async (guid, type) => {

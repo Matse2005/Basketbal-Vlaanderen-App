@@ -40,13 +40,24 @@ function FavoritesPouleScreen({ route, navigation }) {
     setPoules(items);
   };
 
+  const checkForUpdates = async () => {
+    if (favorites !== (await getFavorites())) {
+      favorites = await getFavorites();
+      getPoules();
+    }
+  };
+
   useEffect(() => {
     getPoules();
+
+    setInterval(() => {
+      checkForUpdates();
+    }, 30000);
   }, []);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    getPoules();
+    checkForUpdates();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -60,6 +71,7 @@ function FavoritesPouleScreen({ route, navigation }) {
         <FlatList
           className="h-auto mt-2"
           data={poules}
+          extraData={poules}
           nestedScrollEnabled={true}
           showsVerticalScrollIndicator={false}
           keyExtractor={({ guid }) => guid}

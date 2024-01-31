@@ -77,7 +77,7 @@ function TeamScreen({ route, navigation }) {
       <Tab.Screen
         name="Poules"
         component={PoulesScreen}
-        options={{ title: "Competitie" }}
+        options={{ title: "Competities" }}
         initialParams={{
           guid: guid,
         }}

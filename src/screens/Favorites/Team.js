@@ -42,22 +42,27 @@ function FavoritesTeamScreen({ route, navigation }) {
     setTeams(items);
   };
 
+  const checkForUpdates = async () => {
+    if (favorites !== (await getFavorites())) {
+      favorites = await getFavorites();
+      getTeams();
+    }
+  };
+
   useEffect(() => {
     getTeams();
+
+    setInterval(() => {
+      checkForUpdates();
+    }, 30000);
   }, []);
 
-  // const onRefresh = React.useCallback(() => {
-  //   setRefreshing(true);
-  //   getTeams();
-  //   setTimeout(() => {
-  //     setRefreshing(false);
-  //   }, 2000);
-  // }, []);
-
-  const onRefresh = useCallback(() => {
+  const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    getTeams();
-    setRefreshing(false);
+    checkForUpdates();
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
   }, []);
 
   return (
@@ -67,8 +72,8 @@ function FavoritesTeamScreen({ route, navigation }) {
       ) : (
         <FlatList
           className="h-auto mt-2"
-          extraData={refresh}
           data={teams}
+          extraData={teams}
           nestedScrollEnabled={true}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.guid}

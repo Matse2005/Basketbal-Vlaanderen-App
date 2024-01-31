@@ -9,6 +9,7 @@ import {
 import { getFavorites } from "../../logic/Favorites";
 import { ClubButton } from "../../components/buttons/ClubButton";
 import { NoFavoriteComponent } from "../../components/NoFavorite";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 
 function FavoritesClubScreen({ route, navigation }) {
   const [isLoading, setLoading] = useState(true);
@@ -40,13 +41,24 @@ function FavoritesClubScreen({ route, navigation }) {
     setClubs(items);
   };
 
+  const checkForUpdates = async () => {
+    if (favorites !== (await getFavorites())) {
+      favorites = await getFavorites();
+      getClubs();
+    }
+  };
+
   useEffect(() => {
     getClubs();
+
+    setInterval(() => {
+      checkForUpdates();
+    }, 30000);
   }, []);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
-    getClubs();
+    checkForUpdates();
     setTimeout(() => {
       setRefreshing(false);
     }, 2000);
@@ -60,6 +72,7 @@ function FavoritesClubScreen({ route, navigation }) {
         <FlatList
           className="h-auto mt-2"
           data={clubs}
+          extraData={clubs}
           nestedScrollEnabled={true}
           showsVerticalScrollIndicator={false}
           keyExtractor={({ guid }) => guid}

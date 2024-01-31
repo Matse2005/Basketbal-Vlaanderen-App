@@ -12,6 +12,7 @@ import { getFavorites } from "../logic/Favorites";
 import { NoDataComponent } from "../components/NoData";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { NoFavoriteComponent } from "../components/NoFavorite";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -51,6 +52,7 @@ function GamesByDateScreen({ route, navigation }) {
           <FlatList
             className="mt-2"
             data={matches}
+            extraData={matches}
             showsVerticalScrollIndicator={false}
             keyExtractor={(match, index) => match.wedID + index}
             ListEmptyComponent={<NoDataComponent />}
@@ -82,8 +84,11 @@ function GamesByDateScreen({ route, navigation }) {
 
 function GamesScreen({ route, navigation }) {
   const [isLoading, setLoading] = useState(true);
+  const [isUpdated, setUpdated] = useState(false);
+  // var isUpdated = false;
   const [dates, setDates] = useState([]);
   const [favorites, setFavorites] = useState([]);
+  var myFavorites = [];
   const [focusedDate, setFocusedDate] = useState(
     new Date().toLocaleDateString("en-GB").replaceAll("/", "-")
   );
@@ -222,6 +227,7 @@ function GamesScreen({ route, navigation }) {
 
   const getDates = async (startdate) => {
     try {
+      myFavorites = await getFavorites();
       setFavorites(await getFavorites());
       await retrieveMatches(await getFavorites()).then((matches) => {
         const uniqueMatches = removeDuplicateMatches(matches);
@@ -240,6 +246,14 @@ function GamesScreen({ route, navigation }) {
     }
   };
 
+  const showUpdateScreen = async () => {
+    console.log("Checking again...");
+    if (favorites.length > 0 && favorites !== (await getFavorites())) {
+      console.log("Checking result: needs update...");
+      setUpdated(true);
+    }
+  };
+
   useEffect(() => {
     getDates(
       new Date()
@@ -253,65 +267,80 @@ function GamesScreen({ route, navigation }) {
     );
   }, []);
 
-  return isLoading ? (
-    <ActivityIndicator />
-  ) : favorites.length > 0 ? (
-    dates.length > 0 ? (
-      <Tab.Navigator
-        className="w-full"
-        indicatorStyle={{ backgroundColor: "#fb923c", height: 2 }}
-        initialRouteName={focusedDate}
-        screenOptions={{
-          tabBarLabelStyle: {
-            fontSize: 16,
-            fontWeight: 700,
-            textTransform: "none",
-            color: "#000",
-          },
-          tabBarActiveTintColor: "#fb923c",
-          tabBarInactiveTintColor: "#374151",
-          tabBarItemStyle: {
-            borderRadius: 4,
-          },
-          tabBarStyle: {
-            backgroundColor: "white",
-            display: "none",
-          },
-          headerShown: false,
-          lazy: true,
-        }}
-      >
-        {dates.map((date) => {
-          return (
-            <Tab.Screen
-              key={date}
-              name={date}
-              component={GamesByDateScreen}
-              options={{
-                title: date,
-              }}
-              initialParams={{
-                date: date,
-                matches: allMatches.filter(
-                  (match) =>
-                    new Date(
-                      match.datumString.split("-").reverse().join("-")
-                    ).toString() ==
-                    new Date(date.split("-").reverse().join("-")).toString()
-                ),
-              }}
-            />
-          );
-        })}
-      </Tab.Navigator>
-    ) : (
-      <View className="flex items-center justify-center h-full px-3">
-        <NoDataComponent />
-      </View>
-    )
-  ) : (
-    <View className="flex items-center justify-center h-full px-3">
-      <NoFavoriteComponent />
+  return (
+    <View style={{ flex: 1 }}>
+      {isLoading ? (
+        <ActivityIndicator />
+      ) : favorites.length > 0 ? (
+        dates.length > 0 ? (
+          <Tab.Navigator
+            className="w-full"
+            indicatorStyle={{ backgroundColor: "#fb923c", height: 2 }}
+            initialRouteName={focusedDate}
+            screenOptions={{
+              tabBarLabelStyle: {
+                fontSize: 16,
+                fontWeight: 700,
+                textTransform: "none",
+                color: "#000",
+              },
+              tabBarActiveTintColor: "#fb923c",
+              tabBarInactiveTintColor: "#374151",
+              tabBarItemStyle: {
+                borderRadius: 4,
+              },
+              tabBarStyle: {
+                backgroundColor: "white",
+                display: "none",
+              },
+              headerShown: false,
+              lazy: true,
+            }}
+          >
+            {dates.map((date) => {
+              return (
+                <Tab.Screen
+                  key={date}
+                  name={date}
+                  component={GamesByDateScreen}
+                  options={{
+                    title: date,
+                  }}
+                  initialParams={{
+                    date: date,
+                    matches: allMatches.filter(
+                      (match) =>
+                        new Date(
+                          match.datumString.split("-").reverse().join("-")
+                        ).toString() ==
+                        new Date(date.split("-").reverse().join("-")).toString()
+                    ),
+                  }}
+                />
+              );
+            })}
+          </Tab.Navigator>
+        ) : (
+          <View className="flex items-center justify-center h-full px-3">
+            <NoDataComponent />
+          </View>
+        )
+      ) : (
+        <View className="flex items-center justify-center h-full px-3">
+          <NoFavoriteComponent />
+        </View>
+      )}
+      {global.isUpdated ? (
+        <View className="absolute bottom-0 w-full py-2 bg-orange-400 opacity-90">
+          <Text className="font-bold text-center text-white max-w-4/5">
+            Favoriete Aangepast
+          </Text>
+          <Text className="text-xs text-center text-white max-w-1/2">
+            Je favorite zijn aangepast, herstart de app om de gewijzigde
+            wedstrijden te zien.
+          </Text>
+        </View>
+      ) : null}
     </View>
   );
 }

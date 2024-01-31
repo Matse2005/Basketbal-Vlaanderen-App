@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Icon } from "react-native-elements";
 import { checkFavorite, toggleFavorite } from "../logic/Favorites";
+import { NoDataComponent } from "../components/NoData";
 
 function PouleScreen({ route, navigation }) {
   const [refreshing, setRefreshing] = React.useState(false);
@@ -73,7 +74,9 @@ function PouleScreen({ route, navigation }) {
       ) : (
         <FlatList
           data={data}
+          extraData={data}
           keyExtractor={(item) => item.guid}
+          ListEmptyComponent={<NoDataComponent />}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

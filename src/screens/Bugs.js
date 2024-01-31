@@ -58,7 +58,8 @@ function BugsScreen({ navigation }) {
   const getBugs = async () => {
     try {
       const response = await fetch(
-        "https://raw.githubusercontent.com/Matse2005/Basketbal-Vlaanderen-App/main/bugs.json"
+        "https://raw.githubusercontent.com/Matse2005/Basketbal-Vlaanderen-App/main/bugs.json?v=" +
+          Date.now()
       );
       const json = await response.json();
       setBugs(json);

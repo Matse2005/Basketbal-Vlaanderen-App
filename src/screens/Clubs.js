@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Icon } from "react-native-elements";
+import { NoDataComponent } from "../components/NoData";
 
 function ClubsScreen({ navigation }) {
   const [isLoading, setLoading] = useState(true);
@@ -81,6 +82,8 @@ function ClubsScreen({ navigation }) {
       ) : (
         <FlatList
           data={data}
+          extraData={data}
+          ListEmptyComponent={<NoDataComponent />}
           keyExtractor={({ guid }) => guid}
           showsVerticalScrollIndicator={false}
           disableVirtualization={true}

@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Image } from "expo-image";
+import { NoDataComponent } from "../../components/NoData";
 
 function ClubTeamsScreen({ route, navigation }) {
   const [isLoading, setLoading] = useState(true);
@@ -67,11 +68,13 @@ function ClubTeamsScreen({ route, navigation }) {
         <FlatList
           className="h-full mt-2"
           data={data}
+          extraData={data}
           showsVerticalScrollIndicator={false}
           keyExtractor={({ guid }) => guid}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
+          ListEmptyComponent={<NoDataComponent />}
           disableVirtualization
           renderItem={({ item }) => (
             <View className="h-full space-y-4">
