@@ -23,7 +23,7 @@
     "description": "Getoonde data wordt niet altijd geupdate wanneer je de pagina herlaad (Hangt samen met de favoriete updates)."
   },
   {
-    "status": "Afwachtend",
+    "status": "Work In Progress",
     "title": "Geen data",
     "description": "Nog niet bij alle componenten is er een extra component toegevoegd zal worden als er geen data beschikbaar is om weer te geven waardoor er foutmeldingen kunnen verschijnen."
   },
@@ -32,5 +32,11 @@
     "title": "Wedstrijd opent automatisch",
     "description": "Bij het scrollen door de wedstrijden op de start pagina, opent er soms een wedstrijd.",
     "temp_solution": "Door te scroll op het component dat de datum weergeeft wordt het wedstrijd component niet geactiveerd."
+  },
+  {
+    "status": "Afwachtend",
+    "title": "Favoriet icoontje half uit beeld",
+    "description": "Soms gebeurd het dat het icoontje van favoriet bij een club, team of competitie maar een stuk in beeld is en er niet opgeklikt kan worden.",
+    "temp_solution": "Door later eens opnieuw te proberen of via een andere plek verschijnt het icoontje soms wel"
   }
 ]
