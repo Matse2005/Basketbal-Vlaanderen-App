@@ -55,7 +55,9 @@ function PouleScreen({ route, navigation }) {
   };
 
   useEffect(() => {
-    setIcon();
+    setTimeout(() => {
+      setIcon();
+    }, 200);
     getPoule();
   }, []);
 

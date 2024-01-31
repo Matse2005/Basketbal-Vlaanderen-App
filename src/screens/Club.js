@@ -35,7 +35,9 @@ function ClubScreen({ route, navigation }) {
   };
 
   useEffect(() => {
-    setIcon();
+    setTimeout(() => {
+      setIcon();
+    }, 200);
   }, []);
 
   return (

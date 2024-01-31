@@ -36,7 +36,9 @@ function TeamScreen({ route, navigation }) {
   };
 
   useEffect(() => {
-    setIcon();
+    setTimeout(() => {
+      setIcon();
+    }, 200);
   }, []);
 
   return (
