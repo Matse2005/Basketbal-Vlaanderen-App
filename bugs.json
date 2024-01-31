@@ -7,13 +7,13 @@
   },
   {
     "status": "Opgelost",
-    "title": "Favoriete updates",
+    "title": "Favoriete Scherm Update",
     "description": "Wanneer je een club, team of competitie toegevoegd hebt of verwijderd hebt uit je favoriete wordt de data niet geupdate op het favoriete scherm.",
     "temp_solution": "Door de data te refreshen worden de favoriete nu bijgewerkt."
   },
   {
     "status": "Work In Progress",
-    "title": "Favoriete updates",
+    "title": "Favoriete Wedstrijden Update",
     "description": "Wanneer je een club, team of competitie toegevoegd hebt of verwijderd hebt uit je favoriete wordt de data niet geupdate op het wedstrijden scherm."
   },
   {
