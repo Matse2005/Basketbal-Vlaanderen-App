@@ -9,7 +9,7 @@
     "status": "Opgelost",
     "title": "Favoriete Scherm Update",
     "description": "Wanneer je een club, team of competitie toegevoegd hebt of verwijderd hebt uit je favoriete wordt de data niet geupdate op het favoriete scherm.",
-    "temp_solution": "Door de data te refreshen worden de favoriete nu bijgewerkt."
+    "temp_solution": "Door de data te refreshen worden de favoriete nu direct bijgewerkt, maar elke 30 seconden wordt de pagina ook gefrereshed als er wijzigingen zijn"
   },
   {
     "status": "Work In Progress",
