@@ -3,17 +3,10 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  Text,
   View,
-  TouchableOpacity,
   RefreshControl,
-  SafeAreaView,
-  Linking,
-  Platform,
 } from "react-native";
-import { Icon, Image } from "react-native-elements";
 import { getFavorites } from "../../logic/Favorites";
-import { NoDataComponent } from "../../components/NoData";
 import { ClubButton } from "../../components/buttons/ClubButton";
 import { NoFavoriteComponent } from "../../components/NoFavorite";
 
@@ -49,7 +42,6 @@ function FavoritesClubScreen({ route, navigation }) {
 
   useEffect(() => {
     getClubs();
-    console.log(clubs);
   }, []);
 
   const onRefresh = React.useCallback(() => {

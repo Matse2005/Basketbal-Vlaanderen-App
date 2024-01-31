@@ -1,7 +1,8 @@
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import { Platform, Button, TouchableOpacity, View, Text } from "react-native";
+import { Platform, Button, View, Text } from "react-native";
 import { Icon } from "react-native-elements";
 import openMap from "react-native-open-maps";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import * as Linking from "expo-linking";
 
 function GymButton({ address, show = true }) {

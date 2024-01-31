@@ -12,6 +12,7 @@ function GameCardComponent({ game }) {
           <Image
             PlaceholderContent={<ActivityIndicator />}
             placeholderStyle={{ backgroundColor: "#fff" }}
+            placeholder={require("../../assets/vbl/icon.png")}
             source={{
               uri:
                 "https://vbl.wisseq.eu/vbldataOrganisation/BVBL" +

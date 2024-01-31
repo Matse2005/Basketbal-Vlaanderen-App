@@ -4,11 +4,11 @@ import {
   FlatList,
   Text,
   View,
-  TouchableOpacity,
   RefreshControl,
   Platform,
 } from "react-native";
-import { Icon, Image } from "react-native-elements";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { Icon } from "react-native-elements";
 import GameCardComponent from "../components/GameCardComponent";
 import { OpenGym } from "../components/OpenGym";
 

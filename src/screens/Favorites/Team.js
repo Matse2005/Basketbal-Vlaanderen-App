@@ -3,17 +3,10 @@ import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  Text,
   View,
-  TouchableOpacity,
   RefreshControl,
-  SafeAreaView,
-  Linking,
-  Platform,
 } from "react-native";
-import { Icon, Image } from "react-native-elements";
 import { getFavorites } from "../../logic/Favorites";
-import { NoDataComponent } from "../../components/NoData";
 import { TeamButton } from "../../components/buttons/TeamButton";
 import { useCallback } from "react";
 import { NoFavoriteComponent } from "../../components/NoFavorite";
@@ -46,7 +39,6 @@ function FavoritesTeamScreen({ route, navigation }) {
       setLoading(false);
     }
 
-    console.log(refresh);
     setTeams(items);
   };
 
@@ -65,7 +57,6 @@ function FavoritesTeamScreen({ route, navigation }) {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     getTeams();
-    console.log(teams);
     setRefreshing(false);
   }, []);
 

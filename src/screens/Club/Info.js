@@ -5,12 +5,11 @@ import {
   FlatList,
   Text,
   View,
-  TouchableOpacity,
   RefreshControl,
-  SafeAreaView,
   Linking,
   Platform,
 } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { Icon } from "react-native-elements";
 import { OpenGym } from "../../components/OpenGym";
 import { Image } from "expo-image";
@@ -18,10 +17,8 @@ import { Image } from "expo-image";
 function ClubInfoScreen({ route, navigation }) {
   const [isLoading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = React.useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
   const [data, setData] = useState([]);
   const { guid } = route.params;
-  // const guid = "BVBL1171";
 
   const getClub = async () => {
     try {

@@ -11,9 +11,7 @@ import GameComponent from "../components/GameComponent";
 import { getFavorites } from "../logic/Favorites";
 import { NoDataComponent } from "../components/NoData";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import { useFocusEffect } from "@react-navigation/native";
 import { NoFavoriteComponent } from "../components/NoFavorite";
-import { useCallback } from "react";
 
 const Tab = createMaterialTopTabNavigator();
 

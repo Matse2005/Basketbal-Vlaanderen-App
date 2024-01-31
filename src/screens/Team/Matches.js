@@ -2,18 +2,12 @@
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  FlatList,
   Text,
   View,
-  TouchableOpacity,
   RefreshControl,
-  SafeAreaView,
   ScrollView,
-  Button,
-  Linking,
   Pressable,
 } from "react-native";
-import { Icon, Image } from "react-native-elements";
 import GameComponent from "../../components/GameComponent";
 import { NoDataComponent } from "../../components/NoData";
 

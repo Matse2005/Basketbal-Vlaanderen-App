@@ -5,7 +5,6 @@ import {
   FlatList,
   Text,
   View,
-  TouchableOpacity,
   RefreshControl,
 } from "react-native";
 import { NoDataComponent } from "../components/NoData";

@@ -1,5 +1,6 @@
 import { useActionSheet } from "@expo/react-native-action-sheet";
-import { Platform, Button, TouchableOpacity, View, Text } from "react-native";
+import { Platform, Button, View, Text } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { Icon } from "react-native-elements";
 import openMap from "react-native-open-maps";
 import * as Linking from "expo-linking";

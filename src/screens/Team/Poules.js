@@ -2,20 +2,14 @@
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  FlatList,
   Text,
   View,
-  TouchableOpacity,
   RefreshControl,
-  SafeAreaView,
   ScrollView,
-  Button,
-  Linking,
   Platform,
-  Pressable,
 } from "react-native";
-import { Icon, Image } from "react-native-elements";
-import GameComponent from "../../components/GameComponent";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { Icon } from "react-native-elements";
 import { NoDataComponent } from "../../components/NoData";
 
 function TeamPoulesScreen({ route, navigation }) {

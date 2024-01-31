@@ -1,14 +1,13 @@
-// import "react-native-gesture-handler";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   Text,
   View,
-  TouchableOpacity,
   TextInput,
 } from "react-native";
-import { Icon, Image } from "react-native-elements";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { Icon } from "react-native-elements";
 
 function ClubsScreen({ navigation }) {
   const [isLoading, setLoading] = useState(true);
@@ -38,20 +37,7 @@ function ClubsScreen({ navigation }) {
       }}
       className=""
     >
-      <View className="p-5 my-1 text-sm bg-white rounded-lg  items-left">
-        {/* <Image
-          PlaceholderContent={<ActivityIndicator />}
-          placeholderStyle={{ backgroundColor: "#fff" }}
-          cachePolicy="memory"
-          source={{
-            uri:
-              "https://vbl.wisseq.eu/vbldataOrganisation/BVBL" +
-              item.guid.match(/\d+/g)[0] +
-              ".jpg",
-          }}
-          resizeMode="contain"
-          className=" w-11 h-11"
-        /> */}
+      <View className="p-5 my-1 text-sm bg-white rounded-lg items-left">
         <Text>{item.naam}</Text>
       </View>
     </TouchableOpacity>

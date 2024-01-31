@@ -5,13 +5,9 @@ import {
   FlatList,
   Text,
   View,
-  TouchableOpacity,
   RefreshControl,
-  SafeAreaView,
-  Linking,
-  Platform,
 } from "react-native";
-import { Icon } from "react-native-elements";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { Image } from "expo-image";
 
 function ClubTeamsScreen({ route, navigation }) {
@@ -19,7 +15,6 @@ function ClubTeamsScreen({ route, navigation }) {
   const [refreshing, setRefreshing] = React.useState(false);
   const [data, setData] = useState([]);
   const { guid } = route.params;
-  // const guid = "BVBL1171";
 
   const getClub = async () => {
     try {

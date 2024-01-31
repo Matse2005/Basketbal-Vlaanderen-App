@@ -4,7 +4,6 @@ import {
   FlatList,
   Text,
   View,
-  Platform,
   RefreshControl,
 } from "react-native";
 import { Icon } from "react-native-elements";
