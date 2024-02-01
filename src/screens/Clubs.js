@@ -60,7 +60,9 @@ function ClubsScreen({ navigation }) {
   };
 
   useEffect(() => {
-    getClubs();
+    setTimeout(() => {
+      getClubs();
+    }, 200);
   }, []);
 
   return (

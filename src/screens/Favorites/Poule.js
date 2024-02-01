@@ -48,11 +48,13 @@ function FavoritesPouleScreen({ route, navigation }) {
   };
 
   useEffect(() => {
-    getPoules();
+    setTimeout(() => {
+      getPoules();
 
-    setInterval(() => {
-      checkForUpdates();
-    }, 30000);
+      setInterval(() => {
+        checkForUpdates();
+      }, 30000);
+    }, 200);
   }, []);
 
   const onRefresh = React.useCallback(() => {

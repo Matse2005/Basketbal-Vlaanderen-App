@@ -50,11 +50,13 @@ function FavoritesTeamScreen({ route, navigation }) {
   };
 
   useEffect(() => {
-    getTeams();
+    setTimeout(() => {
+      getTeams();
 
-    setInterval(() => {
-      checkForUpdates();
-    }, 30000);
+      setInterval(() => {
+        checkForUpdates();
+      }, 30000);
+    }, 200);
   }, []);
 
   const onRefresh = React.useCallback(() => {

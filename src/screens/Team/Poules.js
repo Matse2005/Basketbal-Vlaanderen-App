@@ -34,7 +34,9 @@ function TeamPoulesScreen({ route, navigation }) {
   };
 
   useEffect(() => {
-    getClub();
+    setTimeout(() => {
+      getClub();
+    }, 200);
   }, []);
 
   const onRefresh = React.useCallback(() => {

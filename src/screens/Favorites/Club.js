@@ -49,11 +49,13 @@ function FavoritesClubScreen({ route, navigation }) {
   };
 
   useEffect(() => {
-    getClubs();
+    setTimeout(() => {
+      getClubs();
 
-    setInterval(() => {
-      checkForUpdates();
-    }, 30000);
+      setInterval(() => {
+        checkForUpdates();
+      }, 30000);
+    }, 200);
   }, []);
 
   const onRefresh = React.useCallback(() => {

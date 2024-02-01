@@ -71,7 +71,9 @@ function BugsScreen({ navigation }) {
   };
 
   useEffect(() => {
-    getBugs();
+    setTimeout(() => {
+      getBugs();
+    }, 200);
   }, []);
 
   const onRefresh = React.useCallback(() => {

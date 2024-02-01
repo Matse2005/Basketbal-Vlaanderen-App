@@ -35,7 +35,9 @@ function MatchScreen({ route, navigation }) {
   };
 
   useEffect(() => {
-    getMatch();
+    setTimeout(() => {
+      getMatch();
+    }, 200);
   }, []);
 
   const onRefresh = React.useCallback(() => {

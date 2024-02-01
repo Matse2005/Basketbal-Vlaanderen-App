@@ -23,7 +23,9 @@ function GamesByDateScreen({ route, navigation }) {
   const { date } = route.params;
 
   useEffect(() => {
-    setLoading(false);
+    setTimeout(() => {
+      setLoading(false);
+    }, 200);
   });
 
   const onRefresh = React.useCallback(() => {
@@ -255,16 +257,18 @@ function GamesScreen({ route, navigation }) {
   };
 
   useEffect(() => {
-    getDates(
-      new Date()
-        .toLocaleDateString("nl-BE", {
-          year: "numeric",
-          month: "numeric",
-          day: "numeric",
-        })
-        .toString()
-        .replaceAll("/", "-")
-    );
+    setTimeout(() => {
+      getDates(
+        new Date()
+          .toLocaleDateString("nl-BE", {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+          })
+          .toString()
+          .replaceAll("/", "-")
+      );
+    }, 200);
   }, []);
 
   return (
@@ -335,7 +339,7 @@ function GamesScreen({ route, navigation }) {
           <Text className="font-bold text-center text-white max-w-4/5">
             Favoriete Aangepast
           </Text>
-          <Text className="text-xs text-center text-white max-w-1/2">
+          <Text className="text-xs text-center text-white ">
             Je favorite zijn aangepast, herstart de app om de gewijzigde
             wedstrijden te zien.
           </Text>
