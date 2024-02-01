@@ -5,7 +5,6 @@
     "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/app/icon.png",
-    "userInterfaceStyle": "light",
     "scheme": "bbvl",
     "splash": {
       "image": "./assets/app/splash.png",
